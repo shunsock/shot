@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  prepare:
+    desc: "Run cargo check, fmt, clippy, build, and test"
+    cmds:
+      - cargo check
+      - cargo fmt
+      - cargo clippy
+      - cargo build
+      - cargo test
+
+  install:
+    desc: "Build in release mode and move the binary to /usr/local/bin"
+    cmds:
+      - cargo build --release
+      - sudo mv target/release/shot /usr/local/bin/shot
+
+  uninstall:
+    desc: "Remove shot from /usr/local/bin"
+    cmds:
+      - sudo rm /usr/local/bin/shot
+
