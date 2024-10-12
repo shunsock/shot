@@ -14,6 +14,22 @@ impl Default for Receiver {
     }
 }
 
+const ASCII_ART: &str = r#"
+     _______. __    __    ______   .___________.
+    /       ||  |  |  |  /  __  \  |           |
+   |   (----`|  |__|  | |  |  |  | `---|  |----`
+    \   \    |   __   | |  |  |  |     |  |
+.----)   |   |  |  |  | |  `--'  |     |  |
+|_______/    |__|  |__|  \______/      |__|
+                    ##
+             #####%%##%%%#####
+               %%#%@@%#%##%%%%#####%%########%%%%%
+###+#######*-+*###****######***#%%%#%@%
+%%%%%%#######** %%%             %%%
+%%%###*##   #
+ %
+"#;
+
 impl Receiver {
     pub fn new() -> Self {
         Receiver {}
@@ -36,12 +52,26 @@ impl Receiver {
     }
 
     pub fn load_command_settings() -> Command {
-        Command::new("rast")
+        Command::new("shot")
             .about("kill your task in one shot")
             .author("shunsock")
             .version("0.1.0")
-            .arg(Arg::new("expression").required(false).short('e'))
-            .arg(Arg::new("file").required(false).short('f'))
+            .help_template(&format!(
+                "\n{}\n\n{{before-help}}{{about}}\n\nUSAGE:\n    {{usage}}\n\n{{all-args}}{{after-help}}\n",
+                ASCII_ART
+            ))
+            .arg(
+                Arg::new("inline")
+                    .required(false)
+                    .short('i')
+                    .help("read source code inline"),
+            )
+            .arg(
+                Arg::new("file")
+                    .required(false)
+                    .short('f')
+                    .help("read source code from file"),
+            )
             .arg(
                 Arg::new("debug")
                     .short('d')
