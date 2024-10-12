@@ -40,7 +40,7 @@ impl Receiver {
         let matches = command.get_matches();
 
         // コマンドライン引数を取り出す
-        let source_code: Option<String> = matches.get_one::<String>("expression").cloned();
+        let source_code: Option<String> = matches.get_one::<String>("inline").cloned();
         let file_path: Option<String> = matches.get_one::<String>("file").cloned();
         let debug_mode: bool = matches.get_flag("debug");
 
@@ -57,7 +57,7 @@ impl Receiver {
             .author("shunsock")
             .version("0.1.0")
             .help_template(&format!(
-                "\n{}\n\n{{before-help}}{{about}}\n\nUSAGE:\n    {{usage}}\n\n{{all-args}}{{after-help}}\n",
+                "{}\n\n{{before-help}}{{about}}\n\nUSAGE:\n    {{usage}}\n\n{{all-args}}{{after-help}}\n",
                 ASCII_ART
             ))
             .arg(
