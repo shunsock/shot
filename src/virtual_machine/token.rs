@@ -2,11 +2,11 @@ pub mod token_type;
 
 use crate::virtual_machine::token::token_type::TokenType;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub(crate) struct Token {
-    line: usize,
-    char_pos: usize,
-    pub token_type: TokenType,
+    pub(crate) line: usize,
+    pub(crate) char_pos: usize,
+    pub(crate) token_type: TokenType,
 }
 
 impl Token {
