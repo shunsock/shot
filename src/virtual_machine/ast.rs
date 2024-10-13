@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------
 // Abstract Syntax Tree
 // ---------------------------------------------------------------------
+#[derive(Debug, Clone)]
 pub(crate) struct AST {
     pub(crate) line: usize,
     pub(crate) statement: Statement,
