@@ -2,8 +2,8 @@
 // Abstract Syntax Tree
 // ---------------------------------------------------------------------
 pub(crate) struct AST {
-    line: usize,
-    statement: Statement,
+    pub(crate) line: usize,
+    pub(crate) statement: Statement,
 }
 
 // ---------------------------------------------------------------------
