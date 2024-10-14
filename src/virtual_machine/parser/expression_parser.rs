@@ -3,7 +3,7 @@ mod parse_identifier_or_call;
 mod parse_parenthesized;
 mod parse_primary;
 
-use crate::virtual_machine::ast::{ExpressionNode, Precedence};
+use crate::virtual_machine::ast::ExpressionNode;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;

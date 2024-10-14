@@ -1,6 +1,5 @@
-use crate::virtual_machine::ast::{ExpressionNode, Precedence};
+use crate::virtual_machine::ast::ExpressionNode;
 use crate::virtual_machine::parser::expression_parser::parse_binary::parse_binary;
-use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;

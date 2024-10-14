@@ -275,13 +275,6 @@ pub enum BinaryOperator {
     Divide,   // 除算
 }
 
-// 演算子の優先度
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Precedence {
-    Low,  // 低い優先順位 (加算、減算)
-    High, // 高い優先順位 (乗算、除算)
-}
-
 // ---------------------------------------------------------------------
 // Types and Literals
 // ---------------------------------------------------------------------
