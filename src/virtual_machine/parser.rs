@@ -20,7 +20,7 @@ impl Parser {
         Self { tokens, current: 0 }
     }
 
-    pub fn generate(&mut self) -> Result<Vec<AST>, ParserError> {
+    pub fn parse(&mut self) -> Result<Vec<AST>, ParserError> {
         let mut asts: Vec<AST> = Vec::new();
 
         while !self.check(TokenType::Eof) {
