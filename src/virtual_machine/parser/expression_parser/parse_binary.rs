@@ -8,22 +8,47 @@ pub fn parse_binary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> 
     parse_addition_subtraction(parser)
 }
 
-// 加算・減算の解析（優先順位低）
+/// # 加算・減算の解析（優先順位低）
+///
+/// ## Arguments
+/// * `parser` - パーサー
+///
+/// ## Returns
+/// `Result<ExpressionNode, ParserError>` - 式ノード
+///
+/// ## Notes
+/// BinaryOperationNode には左辺と右辺の式ノードが格納される。
+///
+/// ```
+/// BinaryOperationNode {
+///     left: Box::new(left),
+///     operator,
+///     right: Box::new(right),
+/// }
+/// ```
+///
+/// ## Details
+/// primary の処理はこの関数では行わない。parse_multiplication_division で行う。
+///
+/// この関数のwhileループが開始する時点で以下の要件を満たしている
+/// - 左辺の式ノードが存在する
+/// - 演算子が存在する
+/// - TokenType::Asterisk | TokenType::Slash は parse_multiplication_division で処理済み
 fn parse_addition_subtraction(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     // 優先度の高い乗算・除算を先に処理
-    let mut node = parse_multiplication_division(parser)?;
+    let mut node: ExpressionNode = parse_multiplication_division(parser)?;
 
     while let Some(_token) = match parser.peek().token_type {
         TokenType::Plus | TokenType::Minus => Some(parser.peek().token_type.clone()),
         _ => None,
     } {
-        let operator = match parser.advance().token_type {
+        let operator: BinaryOperator = match parser.advance().token_type {
             TokenType::Plus => BinaryOperator::Add,
             TokenType::Minus => BinaryOperator::Subtract,
             _ => unreachable!(),
         };
 
-        let right = parse_multiplication_division(parser)?; // 右辺の式を解析
+        let right: ExpressionNode = parse_multiplication_division(parser)?;
         node = ExpressionNode::BinaryOperation(Box::new(BinaryOperationNode {
             left: Box::new(node),
             operator,
@@ -34,21 +59,42 @@ fn parse_addition_subtraction(parser: &mut Parser) -> Result<ExpressionNode, Par
     Ok(node)
 }
 
-// 乗算・除算の解析（優先順位高）
+/// # 乗算・除算の解析（優先順位高）
+///
+/// ## Arguments
+/// * `parser` - パーサー
+///
+/// ## Returns
+/// `Result<ExpressionNode, ParserError>` - 式ノード
+///
+/// ## Notes
+/// BinaryOperationNode には左辺と右辺の式ノードが格納される。
+///
+/// ```
+/// BinaryOperationNode {
+///   left: Box::new(left),
+///   operator,
+///   right: Box::new(right),
+/// }
+/// ```
+///
+/// ## Details
+/// 最上位の優先度をもつので、left には primary が入る。
+/// primary の処理はこの関数では行わない。parse_primary で行う。
 fn parse_multiplication_division(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-    let mut node = parse_primary(parser)?; // 基本項の解析
+    let mut node: ExpressionNode = parse_primary(parser)?;
 
     while let Some(_token) = match parser.peek().token_type {
         TokenType::Asterisk | TokenType::Slash => Some(parser.peek().token_type.clone()),
         _ => None,
     } {
-        let operator = match parser.advance().token_type {
+        let operator: BinaryOperator = match parser.advance().token_type {
             TokenType::Asterisk => BinaryOperator::Multiply,
             TokenType::Slash => BinaryOperator::Divide,
             _ => unreachable!(),
         };
 
-        let right = parse_primary(parser)?; // 右辺の式を解析
+        let right: ExpressionNode = parse_primary(parser)?;
         node = ExpressionNode::BinaryOperation(Box::new(BinaryOperationNode {
             left: Box::new(node),
             operator,
