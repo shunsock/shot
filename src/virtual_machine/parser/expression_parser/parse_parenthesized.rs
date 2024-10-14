@@ -1,13 +1,14 @@
-use crate::virtual_machine::ast::ExpressionNode;
+use crate::virtual_machine::ast::{ExpressionNode, Precedence};
+use crate::virtual_machine::parser::expression_parser::parse_binary::parse_binary;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-    parser.expect(TokenType::LeftParen)?; // 左括弧を期待
+    parser.expect(TokenType::LeftParen)?; // 左括弧を消費
 
-    // 中身が空の場合の処理
+    // 中身が空かをチェック
     if parser.check(TokenType::RightParen) {
         return Err(ParserError::UnexpectedTokenType {
             token: parser.peek().token_type.clone(),
@@ -16,9 +17,10 @@ pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, Parser
         });
     }
 
-    let expr = parse_expression(parser)?; // 中身の式をパース
+    // 括弧内の式をパース (優先順位に基づくパース)
+    let expr = parse_binary(parser)?;
 
-    // 右括弧があるかを確認、なければエラー
+    // 右括弧があるかを確認し、なければエラー
     parser
         .expect(TokenType::RightParen)
         .map_err(|_| ParserError::MismatchedToken {
@@ -126,5 +128,33 @@ mod tests {
             }
             _ => panic!("Expected nested parentheses with integer literal inside"),
         }
+    }
+
+    pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
+        parser.expect(TokenType::LeftParen)?; // 左括弧を消費
+
+        // 中身が空かをチェック
+        if parser.check(TokenType::RightParen) {
+            return Err(ParserError::UnexpectedTokenType {
+                token: parser.peek().token_type.clone(),
+                line: parser.peek().line,
+                char_pos: parser.peek().char_pos,
+            });
+        }
+
+        // 括弧内の式をパース (優先順位に基づくパース)
+        let expr = parse_binary(parser)?;
+
+        // 右括弧があるかを確認し、なければエラー
+        parser
+            .expect(TokenType::RightParen)
+            .map_err(|_| ParserError::MismatchedToken {
+                expected: TokenType::RightParen,
+                found: parser.peek().token_type.clone(),
+                line: parser.peek().line,
+                char_pos: parser.peek().char_pos,
+            })?;
+
+        Ok(expr)
     }
 }

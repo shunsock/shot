@@ -1,7 +1,6 @@
-mod parser_error;
-
 mod core;
 mod expression_parser;
+mod parser_error;
 mod statement_parser;
 
 use crate::virtual_machine::ast::AST;
