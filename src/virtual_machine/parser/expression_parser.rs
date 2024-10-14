@@ -1,3 +1,4 @@
+mod parse_binary;
 mod parse_identifier_or_call;
 mod parse_parenthesized;
 mod parse_primary;
