@@ -3,7 +3,7 @@ mod expression_parser;
 mod parser_error;
 mod statement_parser;
 
-use crate::virtual_machine::ast::AST;
+use crate::virtual_machine::ast::{Statement, AST};
 use crate::virtual_machine::token::token_type::TokenType;
 use crate::virtual_machine::token::Token;
 use core::expect;
@@ -22,13 +22,14 @@ impl Parser {
 
     pub fn generate(&mut self) -> Result<Vec<AST>, ParserError> {
         let mut asts: Vec<AST> = Vec::new();
+
         while !self.check(TokenType::Eof) {
-            let statement = parse_statement(self)?;
-            asts.push(AST {
-                line: self.peek().line,
-                statement,
-            });
+            let line: usize = self.peek().line;
+            let statement: Statement = parse_statement(self)?;
+
+            asts.push(AST::new(line, statement));
         }
+
         Ok(asts)
     }
 
