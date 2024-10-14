@@ -1,4 +1,5 @@
 mod core;
+mod declaration_parser;
 mod expression_parser;
 mod parser_error;
 mod statement_parser;
