@@ -1,4 +1,5 @@
 mod core;
+mod declaration_parser;
 mod expression_parser;
 mod parser_error;
 mod statement_parser;
@@ -35,6 +36,10 @@ impl Parser {
 
     fn peek(&self) -> &Token {
         &self.tokens[self.current]
+    }
+
+    fn peek_next(&self) -> &Token {
+        &self.tokens[self.current + 1]
     }
 
     fn advance(&mut self) -> &Token {

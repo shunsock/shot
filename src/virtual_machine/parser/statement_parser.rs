@@ -1,28 +1,16 @@
-use crate::virtual_machine::ast::{ExpressionNode, Statement};
+use crate::virtual_machine::ast::{ExpressionNode, Statement, Type, VariableDeclarationNode};
+use crate::virtual_machine::parser::core::type_token_to_type;
+use crate::virtual_machine::parser::declaration_parser::parse_declaration;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
-
+use crate::virtual_machine::token::Token;
 pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     match parser.peek().token_type.clone() {
         TokenType::Let => {
-            // 仮実装: 変数宣言のパース
-            let token = parser.peek().clone();
-            Err(ParserError::NotImplementedError {
-                feature: "Variable declaration".to_string(),
-                line: token.line,
-                char_pos: token.char_pos,
-            })
-        }
-        TokenType::Fn => {
-            // 仮実装: 関数宣言のパース
-            let token = parser.peek().clone();
-            Err(ParserError::NotImplementedError {
-                feature: "Function declaration".to_string(),
-                line: token.line,
-                char_pos: token.char_pos,
-            })
+            // let文のパース
+            parse_let_statement(parser)
         }
         TokenType::Return => {
             // return文のパース
@@ -33,6 +21,10 @@ pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
             parse_expression_statement(parser)
         }
     }
+}
+
+fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
+    parse_declaration(parser)
 }
 
 fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError> {

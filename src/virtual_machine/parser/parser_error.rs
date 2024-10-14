@@ -16,6 +16,12 @@ pub enum ParserError {
         line: usize,
         char_pos: usize,
     },
+    #[error("could not found {found:?} type in Shot at line {line}, position {char_pos}")]
+    TypeNotFound {
+        found: TokenType,
+        line: usize,
+        char_pos: usize,
+    },
     #[error("Unexpected end of input while parsing, expected {expected:?}")]
     UnexpectedEof { expected: TokenType },
     #[error("Not implemented: {feature} at line {line}, position {char_pos}")]

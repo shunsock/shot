@@ -57,7 +57,7 @@ pub enum Statement {
 #[derive(Debug, Clone, PartialEq)]
 pub struct VariableDeclarationNode {
     pub name: String,               // 変数名
-    pub var_type: String,           // 型 (例: "int")
+    pub var_type: Type,             // 型 (例: "int")
     pub value: Box<ExpressionNode>, // 初期化式 (リテラルや式)
 }
 
@@ -287,10 +287,11 @@ pub enum BinaryOperator {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Type {
-    Int,    // 整数型
-    Float,  // 浮動小数点型
-    String, // 文字列型
-    Void,   // Void 型 (戻り値がない)
+    Integer,  // 整数型
+    Float,    // 浮動小数点型
+    String,   // 文字列型
+    Void,     // Void 型 (戻り値がない)
+    Function, // 関数型
 }
 
 // リテラルの値の種類
