@@ -7,6 +7,12 @@ pub(crate) struct AST {
     pub(crate) statement: Statement,
 }
 
+impl AST {
+    pub(crate) fn new(line: usize, statement: Statement) -> Self {
+        Self { line, statement }
+    }
+}
+
 // ---------------------------------------------------------------------
 // Statements
 // ---------------------------------------------------------------------
