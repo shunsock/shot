@@ -36,8 +36,12 @@ pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
 }
 
 fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
+    // returnキーワードを読み飛ばす
+    parser.advance();
+
+    // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;
-    parser.expect(TokenType::Semicolon)?;
+
     Ok(Statement::Return(Box::new(expr)))
 }
 
