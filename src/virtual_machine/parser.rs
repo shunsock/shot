@@ -37,6 +37,10 @@ impl Parser {
         &self.tokens[self.current]
     }
 
+    fn peek_next(&self) -> &Token {
+        &self.tokens[self.current + 1]
+    }
+
     fn advance(&mut self) -> &Token {
         self.current += 1;
         &self.tokens[self.current - 1]
