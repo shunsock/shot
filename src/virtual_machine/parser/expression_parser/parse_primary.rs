@@ -1,4 +1,6 @@
 use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue};
+use crate::virtual_machine::parser::expression_parser::parse_identifier_or_call::parse_identifier_or_call;
+use crate::virtual_machine::parser::expression_parser::parse_parenthesized::parse_parenthesized;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
@@ -40,6 +42,16 @@ pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError>
             Ok(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::None,
             })))
+        }
+        // 識別子や関数呼び出し
+        TokenType::Identifier(_) => {
+            // 識別子または関数呼び出しのパース
+            parse_identifier_or_call(parser)
+        }
+        // 括弧付きの式
+        TokenType::LeftParen => {
+            // 括弧付き式のパース
+            parse_parenthesized(parser)
         }
         // 他のリテラルが必要な場合に追加
         _ => Err(ParserError::UnexpectedTokenType {

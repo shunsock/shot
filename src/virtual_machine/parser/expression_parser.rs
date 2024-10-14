@@ -1,3 +1,4 @@
+mod parse_binary;
 mod parse_identifier_or_call;
 mod parse_parenthesized;
 mod parse_primary;
@@ -6,9 +7,9 @@ use crate::virtual_machine::ast::ExpressionNode;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
+use parse_binary::parse_binary;
 use parse_identifier_or_call::parse_identifier_or_call;
 use parse_parenthesized::parse_parenthesized;
-use parse_primary::parse_primary;
 
 pub fn parse_expression(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     if parser.check(TokenType::LeftParen) {
@@ -16,6 +17,6 @@ pub fn parse_expression(parser: &mut Parser) -> Result<ExpressionNode, ParserErr
     } else if let TokenType::Identifier(_) = parser.peek().token_type {
         parse_identifier_or_call(parser)
     } else {
-        parse_primary(parser)
+        parse_binary(parser)
     }
 }
