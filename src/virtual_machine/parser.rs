@@ -7,7 +7,6 @@ mod statement_parser;
 use crate::virtual_machine::ast::{Statement, AST};
 use crate::virtual_machine::token::token_type::TokenType;
 use crate::virtual_machine::token::Token;
-use core::expect;
 use parser_error::ParserError;
 use statement_parser::parse_statement;
 
@@ -51,8 +50,18 @@ impl Parser {
         self.peek().token_type == token_type
     }
 
-    pub fn expect(&mut self, token_type: TokenType) -> Result<(), ParserError> {
-        expect(self, token_type)
+    pub fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
+        if self.check(token_type.clone()) {
+            self.advance();
+            Ok(())
+        } else {
+            Err(ParserError::MismatchedToken {
+                expected: token_type,
+                found: self.peek().token_type.clone(),
+                line: self.peek().line,
+                char_pos: self.peek().char_pos,
+            })
+        }
     }
 
     fn match_token(&mut self, token_type: TokenType) -> bool {

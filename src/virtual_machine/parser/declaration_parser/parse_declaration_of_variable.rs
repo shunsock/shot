@@ -22,7 +22,7 @@ pub(crate) fn parse_declaration_of_variable(parser: &mut Parser) -> Result<State
     parser.advance();
 
     // colonを読み飛ばす
-    parser.expect(TokenType::Colon)?;
+    parser.check_advance(TokenType::Colon)?;
 
     // 型を読み取る
     let type_token: TokenType = parser.peek().token_type.clone();
@@ -30,13 +30,13 @@ pub(crate) fn parse_declaration_of_variable(parser: &mut Parser) -> Result<State
     parser.advance();
 
     // イコールを読み飛ばす
-    parser.expect(TokenType::Equal)?;
+    parser.check_advance(TokenType::Equal)?;
 
     // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;
 
     // セミコロンを読み飛ばす
-    parser.expect(TokenType::Semicolon)?;
+    parser.check_advance(TokenType::Semicolon)?;
 
     Ok(Statement::DeclarationOfVariable(Box::new(
         VariableDeclarationNode {

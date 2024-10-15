@@ -17,7 +17,7 @@ pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, P
                     break;
                 }
             }
-            parser.expect(TokenType::RightParen)?;
+            parser.check_advance(TokenType::RightParen)?;
             Ok(ExpressionNode::CallOfFunction(Box::new(FunctionCallNode {
                 name: name.clone(),
                 arguments: args,
