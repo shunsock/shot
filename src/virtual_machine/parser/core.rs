@@ -4,7 +4,8 @@ use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
 
 pub fn expect(parser: &mut Parser, token_type: TokenType) -> Result<(), ParserError> {
-    if parser.match_token(token_type.clone()) {
+    if parser.check(token_type.clone()) {
+        parser.advance();
         Ok(())
     } else {
         Err(ParserError::MismatchedToken {
