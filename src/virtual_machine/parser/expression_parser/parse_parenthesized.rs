@@ -5,7 +5,7 @@ use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-    parser.expect(TokenType::LeftParen)?; // 左括弧を消費
+    parser.check_advance(TokenType::LeftParen)?; // 左括弧を消費
 
     // 中身が空かをチェック
     if parser.check(TokenType::RightParen) {
@@ -21,7 +21,7 @@ pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, Parser
 
     // 右括弧があるかを確認し、なければエラー
     parser
-        .expect(TokenType::RightParen)
+        .check_advance(TokenType::RightParen)
         .map_err(|_| ParserError::MismatchedToken {
             expected: TokenType::RightParen,
             found: parser.peek().token_type.clone(),
@@ -130,7 +130,7 @@ mod tests {
     }
 
     pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-        parser.expect(TokenType::LeftParen)?; // 左括弧を消費
+        parser.check_advance(TokenType::LeftParen)?; // 左括弧を消費
 
         // 中身が空かをチェック
         if parser.check(TokenType::RightParen) {
@@ -146,7 +146,7 @@ mod tests {
 
         // 右括弧があるかを確認し、なければエラー
         parser
-            .expect(TokenType::RightParen)
+            .check_advance(TokenType::RightParen)
             .map_err(|_| ParserError::MismatchedToken {
                 expected: TokenType::RightParen,
                 found: parser.peek().token_type.clone(),
