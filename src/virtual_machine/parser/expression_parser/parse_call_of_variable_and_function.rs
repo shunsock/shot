@@ -34,7 +34,7 @@ pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, P
                         // カンマがあれば読み飛ばす
                         parser.advance();
                     }
-                    _ =>  {
+                    _ => {
                         // 引数を読み込む
                         args.push(parse_expression(parser)?);
                     }
