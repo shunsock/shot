@@ -1,11 +1,9 @@
-use crate::virtual_machine::ast::{ExpressionNode, Statement, Type, VariableDeclarationNode};
-use crate::virtual_machine::parser::core::type_token_to_type;
+use crate::virtual_machine::ast::{ExpressionNode, Statement};
 use crate::virtual_machine::parser::declaration_parser::parse_declaration;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
-use crate::virtual_machine::token::Token;
 pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     match parser.peek().token_type.clone() {
         TokenType::Let => {

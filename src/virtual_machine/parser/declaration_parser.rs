@@ -1,7 +1,7 @@
 mod parse_declaration_of_function;
 mod parse_declaration_of_variable;
 
-use crate::virtual_machine::ast::{Statement, Type};
+use crate::virtual_machine::ast::Statement;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
