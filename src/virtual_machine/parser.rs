@@ -95,22 +95,4 @@ impl Parser {
         self.advance();
         Ok(())
     }
-
-    /// 次のトークンが指定したトークンタイプか確認し、一致しない場合はエラーを返す
-    ///
-    /// # Arguments
-    ///
-    /// * `token_type` - 確認したいトークンタイプ
-    ///
-    /// # Returns
-    ///
-    /// * `Result<(), ParserError>` - 一致した場合はOk、一致しない場合はエラー
-    fn match_token(&mut self, token_type: TokenType) -> bool {
-        if self.check(token_type.clone()) {
-            self.advance();
-            true
-        } else {
-            false
-        }
-    }
 }
