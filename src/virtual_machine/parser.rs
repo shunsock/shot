@@ -83,7 +83,7 @@ impl Parser {
     /// # Returns
     ///
     /// * `Result<(), ParserError>` - 一致した場合はOk、一致しない場合はエラー
-    pub fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
+    fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
         if self.check(token_type.clone()) == false {
             return Err(ParserError::MismatchedToken {
                 expected: token_type,
