@@ -1,5 +1,5 @@
 use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue};
-use crate::virtual_machine::parser::expression_parser::parse_identifier_or_call::parse_identifier_or_call;
+use crate::virtual_machine::parser::expression_parser::parse_call_of_variable_and_function::parse_identifier_or_call;
 use crate::virtual_machine::parser::expression_parser::parse_parenthesized::parse_parenthesized;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
