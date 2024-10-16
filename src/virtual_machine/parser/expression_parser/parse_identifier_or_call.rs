@@ -5,12 +5,25 @@ use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-    if let TokenType::Identifier(ref name) = parser.peek().token_type.clone() {
-        parser.advance();
+    let name: String = match parser.peek().token_type.clone() {
+        TokenType::Identifier(name) => name,
+        _ => {
+            return Err(ParserError::UnexpectedTokenType {
+                token: parser.peek().token_type.clone(),
+                line: parser.peek().line,
+                char_pos: parser.peek().char_pos,
+            })
+        }
+    };
+    // 名前を読み飛ばす
+    // Function: let f: fn(): void = { ... } のf
+    // Variable Declaration: let x: int = 0; のx
+    parser.advance();
 
-        // 次のトークンが左括弧なら関数呼び出し
-        if parser.match_token(TokenType::LeftParen) {
-            let mut args = Vec::new();
+    // 次のトークンが左括弧なら関数呼び出し
+    match parser.peek().token_type {
+        TokenType::LeftParen => {
+            let mut args: Vec<ExpressionNode> = Vec::new();
             while !parser.check(TokenType::RightParen) {
                 args.push(parse_expression(parser)?);
                 if !parser.match_token(TokenType::Comma) {
@@ -22,17 +35,12 @@ pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, P
                 name: name.clone(),
                 arguments: args,
             })))
-        } else {
+        }
+        _ => {
             // 変数呼び出し
             Ok(ExpressionNode::CallOfVariable(Box::new(VariableCallNode {
                 name: name.clone(),
             })))
         }
-    } else {
-        Err(ParserError::UnexpectedTokenType {
-            token: parser.peek().token_type.clone(),
-            line: parser.peek().line,
-            char_pos: parser.peek().char_pos,
-        })
     }
 }
