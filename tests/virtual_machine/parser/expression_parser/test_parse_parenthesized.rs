@@ -83,4 +83,45 @@ mod tests {
             _ => panic!("Expected nested parentheses with integer literal inside"),
         }
     }
+
+    /// 括弧内の式をパースするテスト
+    /// test case: `(1 + 1)`
+    #[test]
+    fn test_parse_valid_parenthesized_expression() {
+        let tokens = vec![
+            Token::new(1, 1, TokenType::LeftParen),
+            Token::new(1, 2, TokenType::IntegerLiteral(1)),
+            Token::new(1, 3, TokenType::BinaryOperator(TokenType::Plus)),
+            Token::new(1, 4, TokenType::IntegerLiteral(1)),
+            Token::new(1, 3, TokenType::RightParen),
+        ];
+        let mut parser = create_parser_with_tokens(tokens);
+
+        let result = parse_parenthesized(&mut parser);
+        assert!(result.is_ok());
+
+        let binary_op = match result.unwrap() {
+            ExpressionNode::BinaryOperation(binary_op) => binary_op,
+            _ => panic!("Expected binary operation inside parentheses"),
+        };
+
+        match *binary_op.left {
+            ExpressionNode::Literal(literal) => {
+                assert_eq!(literal.value, LiteralValue::Integer(1));
+            }
+            _ => panic!("Expected integer literal inside binary operation"),
+        }
+
+        match *binary_op.right {
+            ExpressionNode::Literal(literal) => {
+                assert_eq!(literal.value, LiteralValue::Integer(1));
+            }
+            _ => panic!("Expected integer literal inside binary operation"),
+        }
+
+        match binary_op.operator {
+            TokenType::Plus => {}
+            _ => panic!("Expected plus operator in binary operation"),
+        }
+    }
 }
