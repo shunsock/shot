@@ -4,6 +4,7 @@ use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
+
 pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     match parser.peek().token_type.clone() {
         TokenType::Let => {
@@ -37,6 +38,31 @@ fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError>
     Ok(Statement::Return(Box::new(expr)))
 }
 
+/// # 式文（Expression Statement）のパース
+///
+/// 式文は、式の末尾にセミコロンがついたものです。
+///
+/// ## Syntax
+///
+/// ```text
+/// expression_statement = expression_node ";"
+/// ```
+///
+/// ## Note
+///
+/// 式文は下記のような定義になっています。
+///
+/// ```
+/// pub enum ExpressionNode {
+//     BinaryOperation(Box<BinaryOperationNode>), // 二項演算
+//     CallOfFunction(Box<FunctionCallNode>),     // 関数呼び出し
+//     CallOfVariable(Box<VariableCallNode>),     // 識別子
+//     Literal(Box<LiteralNode>),                 // リテラル
+//     TypeCast(Box<TypeCastNode>),               // 型キャスト
+/// }
+/// ```
+///
+/// このうち `BinaryOperation` などの式は、内部にさらに式を持つことがあります。
 fn parse_expression_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;

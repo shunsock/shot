@@ -1,5 +1,5 @@
 use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue};
-use crate::virtual_machine::parser::expression_parser::parse_binary::parse_binary;
+use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
@@ -25,7 +25,7 @@ pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, Parser
     }
 
     // 括弧内の式をパース (優先順位に基づくパース)
-    let expr: ExpressionNode = parse_binary(parser)?;
+    let expr: ExpressionNode = parse_expression(parser)?;
 
     // 右括弧があるかを確認し、なければエラー
     parser
