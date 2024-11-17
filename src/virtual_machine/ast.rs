@@ -3,13 +3,16 @@
 // ---------------------------------------------------------------------
 #[derive(Debug, Clone)]
 pub(crate) struct AST {
-    pub(crate) line: usize,
-    pub(crate) statement: Statement,
+    pub(crate) statements: Vec<(usize, Statement)>,
 }
 
 impl AST {
-    pub(crate) fn new(line: usize, statement: Statement) -> Self {
-        Self { line, statement }
+    pub(crate) fn new() -> Self {
+        Self { statements: vec![] }
+    }
+
+    pub(crate) fn push_statement(&mut self, line: usize, statement: Statement) {
+        self.statements.push((line, statement))
     }
 }
 
