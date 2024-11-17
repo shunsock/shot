@@ -20,17 +20,17 @@ impl Parser {
         Self { tokens, current: 0 }
     }
 
-    pub fn parse(&mut self) -> Result<Vec<AST>, ParserError> {
-        let mut asts: Vec<AST> = Vec::new();
+    pub fn parse(&mut self) -> Result<AST, ParserError> {
+        let mut ast: AST = AST::new();
 
         while !self.check(TokenType::Eof) {
             let line: usize = self.peek().line;
             let statement: Statement = parse_statement(self)?;
 
-            asts.push(AST::new(line, statement));
+            ast.push_statement(line, statement)
         }
 
-        Ok(asts)
+        Ok(ast)
     }
 
     /// 現在のトークンを見る

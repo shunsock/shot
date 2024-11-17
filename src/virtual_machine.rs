@@ -46,8 +46,8 @@ impl VirtualMachine {
         }
 
         let mut parser: Parser = Parser::new(tokens);
-        let asts = match parser.parse() {
-            Ok(asts) => asts,
+        let ast: AST = match parser.parse() {
+            Ok(ast) => ast,
             Err(error) => {
                 eprintln!("{:?}", error.to_string());
                 exit(1);
@@ -55,7 +55,7 @@ impl VirtualMachine {
         };
 
         if self.debug {
-            Self::print_asts(asts.clone());
+            Self::print_statements(ast.clone());
         }
     }
 
@@ -67,11 +67,11 @@ impl VirtualMachine {
         println!("\n");
     }
 
-    fn print_asts(asts: Vec<AST>) {
+    fn print_statements(ast: AST) {
         println!("AST is created:");
-        for (index_of_ast, ast) in asts.into_iter().enumerate() {
-            println!("  AST[{}]:", index_of_ast);
-            println!("    {:?}", ast);
+        for (index_of_ast, statement) in ast.statements.into_iter().enumerate() {
+            println!("  Statement[{}]:", index_of_ast);
+            println!("    {:?}", statement.1);
         }
         println!("\n");
     }
