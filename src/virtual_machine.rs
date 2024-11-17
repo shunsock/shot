@@ -46,7 +46,7 @@ impl VirtualMachine {
         }
 
         let mut parser: Parser = Parser::new(tokens);
-        let ast = match parser.parse() {
+        let ast: AST = match parser.parse() {
             Ok(ast) => ast,
             Err(error) => {
                 eprintln!("{:?}", error.to_string());
