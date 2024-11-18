@@ -61,7 +61,7 @@ mod tests {
         Parser::new(tokens_with_eof)
     }
 
-    /// 単純な変数宣言のテスト
+    /// string型の変数の変数宣言のテスト
     /// let name: string = "shunsock";
     #[test]
     fn parses_string_variable_declaration() {
@@ -87,6 +87,48 @@ mod tests {
             Token::new(1, 4, TokenType::StringType),
             Token::new(1, 5, TokenType::Equal),
             Token::new(1, 6, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 7, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let variable_declaration_node: Box<VariableDeclarationNode> = match result.unwrap() {
+            Statement::DeclarationOfVariable(node) => node,
+            _ => panic!("Expected a DeclarationOfVariable"),
+        };
+        assert_eq!(variable_declaration_node, expected);
+    }
+
+    /// Integer型の変数の変数宣言のテスト
+    /// let num: int = 0;
+    #[test]
+    fn parses_integer_variable_declaration() {
+        // 生成されるAST Node
+        let expected = Box::new(VariableDeclarationNode {
+            name: "num".to_string(),
+            var_type: Type::Integer,
+            value: Box::new(
+                ExpressionNode::Literal(
+                    Box::new(LiteralNode {
+                        value: LiteralValue::Integer(0),
+                    })
+                )
+            ),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // num: int = 0;
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 2, TokenType::Identifier("num".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::IntType),
+            Token::new(1, 5, TokenType::Equal),
+            Token::new(1, 6, TokenType::IntegerLiteral(0)),
             Token::new(1, 7, TokenType::Semicolon),
         ];
         let mut parser: Parser = create_parser_with_tokens(tokens);
