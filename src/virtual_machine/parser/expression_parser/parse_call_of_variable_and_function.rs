@@ -212,4 +212,28 @@ mod tests {
         };
         assert_eq!(call_of_function, expected);
     }
+
+    // 異常系テスト
+
+    /// 引数が複数存在する関数のパースで引数の間にカンマがない時にエラーを出力するか確認するテスト
+    /// f(0 "shunsock");
+    #[test]
+    fn parse_function_with_arguments_but_without_comma() {
+        // テストする関数の入力である、Token列, Parserの生成
+        // f();
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("f".to_string())),
+            Token::new(1, 2, TokenType::LeftParen),
+            Token::new(1, 3, TokenType::IntegerLiteral(0)),
+            // ここにカンマが必要
+            Token::new(1, 3, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 3, TokenType::RightParen),
+            Token::new(1, 4, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_identifier_or_call(&mut parser);
+        assert!(result.is_err());
+    }
 }
