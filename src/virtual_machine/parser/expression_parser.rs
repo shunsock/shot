@@ -1,7 +1,7 @@
-mod parse_binary;
-mod parse_call_of_variable_and_function;
-mod parse_parenthesized;
-mod parse_primary;
+pub mod parse_binary;
+pub mod parse_call_of_variable_and_function;
+pub mod parse_parenthesized;
+pub mod parse_primary;
 
 use crate::virtual_machine::ast::ExpressionNode;
 use crate::virtual_machine::parser::parser_error::ParserError;
