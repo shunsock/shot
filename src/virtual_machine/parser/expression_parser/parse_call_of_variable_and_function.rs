@@ -107,7 +107,7 @@ mod tests {
         assert_eq!(call_of_function, expected);
     }
 
-    /// 引数が存在する関数のパースが可能か確認するテスト
+    /// 引数が一つ存在する関数のパースが可能か確認するテスト
     /// f(0);
     #[test]
     fn parse_function_with_an_argument() {
