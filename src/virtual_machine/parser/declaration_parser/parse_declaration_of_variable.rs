@@ -101,6 +101,8 @@ mod tests {
         assert_eq!(variable_declaration_node, expected);
     }
 
+    // 正常系テスト
+
     /// Integer型の変数の変数宣言のテスト
     /// let num: int = 0;
     #[test]
@@ -213,5 +215,91 @@ mod tests {
             _ => panic!("Expected a DeclarationOfVariable"),
         };
         assert_eq!(variable_declaration_node, expected);
+    }
+
+    // 異常系テスト
+
+    /// colonがない場合にエラーを出力するか確認するテスト
+    /// let name string = "shunsock";  # error
+    #[test]
+    fn raise_error_without_colon() {
+        // テストする関数の入力である、Token列, Parserの生成
+        // name: string = "shunsock";
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("name".to_string())),
+            Token::new(1, 2, TokenType::StringType),
+            Token::new(1, 3, TokenType::Equal),
+            Token::new(1, 4, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 5, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーになることを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_err());
+    }
+
+    /// type annotationがない場合にエラーを出力するか確認するテスト
+    /// let name: = "shunsock";  # error
+    #[test]
+    fn raise_error_without_type_annotation() {
+        // テストする関数の入力である、Token列, Parserの生成
+        // name: string = "shunsock";
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("name".to_string())),
+            Token::new(1, 2, TokenType::Colon),
+            Token::new(1, 3, TokenType::Equal),
+            Token::new(1, 4, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 5, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーになることを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_err());
+    }
+
+    /// equalがない場合にエラーを出力するか確認するテスト
+    /// let name: string "shunsock";  # error
+    #[test]
+    fn raise_error_without_equal() {
+        // テストする関数の入力である、Token列, Parserの生成
+        // name: string "shunsock";
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("name".to_string())),
+            Token::new(1, 2, TokenType::Colon),
+            Token::new(1, 3, TokenType::StringType),
+            Token::new(1, 4, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 5, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーになることを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_err());
+    }
+
+    /// expressionがない場合にエラーを出力するか確認するテスト
+    /// let name: string = ;  # error
+    #[test]
+    fn raise_error_without_expression() {
+        // テストする関数の入力である、Token列, Parserの生成
+        // name: string = ;
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("name".to_string())),
+            Token::new(1, 2, TokenType::Colon),
+            Token::new(1, 3, TokenType::StringType),
+            Token::new(1, 4, TokenType::Equal),
+            Token::new(1, 5, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーになることを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_err());
     }
 }
