@@ -49,10 +49,12 @@ pub(crate) fn parse_declaration_of_variable(parser: &mut Parser) -> Result<State
 
 #[cfg(test)]
 mod tests {
-    use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue, Statement, Type, VariableDeclarationNode};
-    use crate::virtual_machine::parser::{Parser, TokenType};
+    use crate::virtual_machine::ast::{
+        ExpressionNode, LiteralNode, LiteralValue, Statement, Type, VariableDeclarationNode,
+    };
     use crate::virtual_machine::parser::declaration_parser::parse_declaration_of_variable::parse_declaration_of_variable;
     use crate::virtual_machine::parser::parser_error::ParserError;
+    use crate::virtual_machine::parser::{Parser, TokenType};
     use crate::virtual_machine::token::Token;
 
     fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
@@ -69,13 +71,9 @@ mod tests {
         let expected = Box::new(VariableDeclarationNode {
             name: "name".to_string(),
             var_type: Type::String,
-            value: Box::new(
-                ExpressionNode::Literal(
-                    Box::new(LiteralNode {
-                        value: LiteralValue::String("shunsock".to_string()),
-                    })
-                )
-            ),
+            value: Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::String("shunsock".to_string()),
+            }))),
         });
 
         // テストする関数の入力である、Token列, Parserの生成
@@ -111,13 +109,9 @@ mod tests {
         let expected = Box::new(VariableDeclarationNode {
             name: "num".to_string(),
             var_type: Type::Integer,
-            value: Box::new(
-                ExpressionNode::Literal(
-                    Box::new(LiteralNode {
-                        value: LiteralValue::Integer(0),
-                    })
-                )
-            ),
+            value: Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(0),
+            }))),
         });
 
         // テストする関数の入力である、Token列, Parserの生成
@@ -153,13 +147,9 @@ mod tests {
         let expected = Box::new(VariableDeclarationNode {
             name: "num".to_string(),
             var_type: Type::Float,
-            value: Box::new(
-                ExpressionNode::Literal(
-                    Box::new(LiteralNode {
-                        value: LiteralValue::Float(0.0),
-                    })
-                )
-            ),
+            value: Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Float(0.0),
+            }))),
         });
 
         // テストする関数の入力である、Token列, Parserの生成
@@ -187,7 +177,6 @@ mod tests {
         assert_eq!(variable_declaration_node, expected);
     }
 
-
     /// void型の変数の変数宣言のテスト
     /// let value: void = none;
     #[test]
@@ -196,13 +185,9 @@ mod tests {
         let expected = Box::new(VariableDeclarationNode {
             name: "value".to_string(),
             var_type: Type::Void,
-            value: Box::new(
-                ExpressionNode::Literal(
-                    Box::new(LiteralNode {
-                        value: LiteralValue::None,
-                    })
-                )
-            ),
+            value: Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::None,
+            }))),
         });
 
         // テストする関数の入力である、Token列, Parserの生成
