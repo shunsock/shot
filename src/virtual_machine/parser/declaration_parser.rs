@@ -1,5 +1,5 @@
 mod parse_declaration_of_function;
-mod parse_declaration_of_variable;
+pub mod parse_declaration_of_variable;
 
 use crate::virtual_machine::ast::Statement;
 use crate::virtual_machine::parser::Parser;

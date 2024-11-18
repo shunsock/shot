@@ -2,7 +2,7 @@
 // Abstract Syntax Tree
 // ---------------------------------------------------------------------
 #[derive(Debug, Clone)]
-pub(crate) struct AST {
+pub struct AST {
     pub(crate) statements: Vec<(usize, Statement)>,
 }
 

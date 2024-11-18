@@ -6,7 +6,7 @@ use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
 
-pub(crate) fn parse_declaration_of_variable(parser: &mut Parser) -> Result<Statement, ParserError> {
+pub fn parse_declaration_of_variable(parser: &mut Parser) -> Result<Statement, ParserError> {
     // 名前を読み取る
     let name: String = match parser.peek().token_type.clone() {
         TokenType::Identifier(name) => name,

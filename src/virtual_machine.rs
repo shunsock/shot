@@ -1,7 +1,7 @@
-mod ast;
-mod parser;
+pub mod ast;
+pub mod parser;
 mod scanner;
-mod token;
+pub mod token;
 
 use crate::virtual_machine::ast::AST;
 use crate::virtual_machine::parser::Parser;

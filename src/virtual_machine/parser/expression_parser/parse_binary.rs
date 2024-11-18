@@ -19,14 +19,6 @@ pub fn parse_binary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> 
 /// ## Notes
 /// BinaryOperationNode には左辺と右辺の式ノードが格納される。
 ///
-/// ```
-/// BinaryOperationNode {
-///     left: Box::new(left),
-///     operator,
-///     right: Box::new(right),
-/// }
-/// ```
-///
 /// ## Details
 /// primary の処理はこの関数では行わない。parse_multiplication_division で行う。
 ///
@@ -69,14 +61,6 @@ fn parse_addition_subtraction(parser: &mut Parser) -> Result<ExpressionNode, Par
 ///
 /// ## Notes
 /// BinaryOperationNode には左辺と右辺の式ノードが格納される。
-///
-/// ```
-/// BinaryOperationNode {
-///   left: Box::new(left),
-///   operator,
-///   right: Box::new(right),
-/// }
-/// ```
 ///
 /// ## Details
 /// 最上位の優先度をもつので、left には primary が入る。
