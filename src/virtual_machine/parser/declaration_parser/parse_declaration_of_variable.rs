@@ -46,3 +46,60 @@ pub(crate) fn parse_declaration_of_variable(parser: &mut Parser) -> Result<State
         },
     )))
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue, Statement, Type, VariableDeclarationNode};
+    use crate::virtual_machine::parser::{Parser, TokenType};
+    use crate::virtual_machine::parser::declaration_parser::parse_declaration_of_variable::parse_declaration_of_variable;
+    use crate::virtual_machine::parser::parser_error::ParserError;
+    use crate::virtual_machine::token::Token;
+
+    fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
+        let mut tokens_with_eof = tokens.clone();
+        tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
+        Parser::new(tokens_with_eof)
+    }
+
+    /// 単純な変数宣言のテスト
+    /// let name: string = "shunsock";
+    #[test]
+    fn parses_string_variable_declaration() {
+        // 生成されるAST Node
+        let expected = Box::new(VariableDeclarationNode {
+            name: "name".to_string(),
+            var_type: Type::String,
+            value: Box::new(
+                ExpressionNode::Literal(
+                    Box::new(LiteralNode {
+                        value: LiteralValue::String("shunsock".to_string()),
+                    })
+                )
+            ),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // name: string = "shunsock";
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 2, TokenType::Identifier("name".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::StringType),
+            Token::new(1, 5, TokenType::Equal),
+            Token::new(1, 6, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 7, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_variable(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let variable_declaration_node: Box<VariableDeclarationNode> = match result.unwrap() {
+            Statement::DeclarationOfVariable(node) => node,
+            _ => panic!("Expected a DeclarationOfVariable"),
+        };
+        assert_eq!(variable_declaration_node, expected);
+    }
+}
