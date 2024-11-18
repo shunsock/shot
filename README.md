@@ -70,6 +70,8 @@ task uninstall
 
 ## BNF
 
+This is BNF of Shot Language.
+
 ```
 <Program> ::= <StatementList>
 <StatementList> ::= <Statement> ";" | <Statement> ";" <StatementList>
