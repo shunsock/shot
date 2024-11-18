@@ -183,4 +183,33 @@ mod tests {
         };
         assert_eq!(call_of_function, expected);
     }
+
+    /// 変数呼び出しが可能か確認するテスト
+    /// x;
+    #[test]
+    fn parse_variable_call() {
+        // 生成されるAST Node
+        let expected: Box<VariableCallNode> = Box::new(VariableCallNode {
+            name: "x".to_string(),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // f();
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("x".to_string())),
+            Token::new(1, 4, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_identifier_or_call(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let call_of_function: Box<VariableCallNode> = match result.clone().unwrap() {
+            ExpressionNode::CallOfVariable(call_of_variable) => call_of_variable,
+            _ => panic!("ExpectedNode::CallOfVariable"),
+        };
+        assert_eq!(call_of_function, expected);
+    }
 }
