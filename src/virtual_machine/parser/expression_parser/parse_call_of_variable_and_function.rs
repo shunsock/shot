@@ -141,4 +141,46 @@ mod tests {
         };
         assert_eq!(call_of_function, expected);
     }
+
+    /// 引数が複数存在する関数のパースが可能か確認するテスト
+    /// f(0, "shunsock");
+    #[test]
+    fn parse_function_with_arguments() {
+        // 生成されるAST Node
+        let expected: Box<FunctionCallNode> = Box::new(FunctionCallNode {
+            name: "f".to_string(),
+            arguments: vec![
+                ExpressionNode::Literal(Box::new(LiteralNode {
+                    value: LiteralValue::Integer(0),
+                })),
+                ExpressionNode::Literal(Box::new(LiteralNode {
+                    value: LiteralValue::String("shunsock".to_string()),
+                })),
+            ],
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // f();
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("f".to_string())),
+            Token::new(1, 2, TokenType::LeftParen),
+            Token::new(1, 3, TokenType::IntegerLiteral(0)),
+            Token::new(1, 3, TokenType::Comma),
+            Token::new(1, 3, TokenType::StringLiteral("shunsock".to_string())),
+            Token::new(1, 3, TokenType::RightParen),
+            Token::new(1, 4, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_identifier_or_call(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let call_of_function: Box<FunctionCallNode> = match result.clone().unwrap() {
+            ExpressionNode::CallOfFunction(call_of_function) => call_of_function,
+            _ => panic!("ExpectedNode::CallOfFunction"),
+        };
+        assert_eq!(call_of_function, expected);
+    }
 }
