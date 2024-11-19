@@ -1,7 +1,7 @@
 use crate::virtual_machine::token::token_type::TokenType;
 use thiserror::Error;
 
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Clone, Error, PartialEq)]
 pub enum ParserError {
     #[error("Unexpected token: {token:?} at line {line}, position {char_pos}")]
     UnexpectedTokenType {
