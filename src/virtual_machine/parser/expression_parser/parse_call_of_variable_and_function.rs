@@ -4,6 +4,15 @@ use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
+/// ## 関数と変数の呼び出しをパースする関数
+///
+/// ## Parameters
+///
+/// * parser: shot言語のパーサー
+///
+/// ## Return
+/// * ExpressionNode: ExpressionのAST Node
+/// * ParserError: Parserのエラー
 pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     let name: String = match parser.peek().token_type.clone() {
         TokenType::Identifier(name) => name,
@@ -21,9 +30,10 @@ pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, P
     // Variable Declaration: let x: int = 0; のx
     parser.advance();
 
-    // 次のトークンが左括弧なら関数呼び出し
     match parser.peek().token_type {
+        // 次のトークンが左括弧なら関数呼び出し
         TokenType::LeftParen => parse_call_of_function(name.clone(), parser),
+        // それ以外であれば変数の呼び出し
         _ => parse_call_of_variable(name.clone()),
     }
 }
@@ -56,7 +66,7 @@ fn parse_call_of_function(
 
         // そうでないならば次の引数が存在する
         // f(a, <- 次の引数が来るはず
-        // ","があることを確認する
+        // ","があることを確認して次のループへ行く
         parser.check_advance(TokenType::Comma)?;
     }
 
