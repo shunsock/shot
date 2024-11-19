@@ -23,40 +23,56 @@ pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, P
 
     // 次のトークンが左括弧なら関数呼び出し
     match parser.peek().token_type {
-        TokenType::LeftParen => {
-            // LeftParenを読み飛ばす
-            parser.advance();
-
-            // 引数を読み込む
-            let mut args: Vec<ExpressionNode> = Vec::new();
-            while !parser.check(TokenType::RightParen) {
-                match parser.peek().token_type.clone() {
-                    TokenType::Comma => {
-                        // カンマがあれば読み飛ばす
-                        parser.advance();
-                    }
-                    _ => {
-                        // 引数を読み込む
-                        args.push(parse_expression(parser)?);
-                    }
-                };
-            }
-
-            // 右括弧があることを確認して読み飛ばす
-            parser.check_advance(TokenType::RightParen)?;
-
-            Ok(ExpressionNode::CallOfFunction(Box::new(FunctionCallNode {
-                name: name.clone(),
-                arguments: args,
-            })))
-        }
-        _ => {
-            // 変数呼び出し
-            Ok(ExpressionNode::CallOfVariable(Box::new(VariableCallNode {
-                name: name.clone(),
-            })))
-        }
+        TokenType::LeftParen => parse_call_of_function(name.clone(), parser),
+        _ => parse_call_of_variable(name.clone()),
     }
+}
+
+fn parse_call_of_function(
+    name: String,
+    parser: &mut Parser,
+) -> Result<ExpressionNode, ParserError> {
+    // LeftParenを読み飛ばす
+    parser.advance();
+
+    // 引数がない場合のearly return
+    if parser.check(TokenType::RightParen) {
+        return Ok(ExpressionNode::CallOfFunction(Box::new(FunctionCallNode {
+            name: name.clone(),
+            arguments: vec![],
+        })));
+    }
+
+    // 引数がある場合の処理
+    let mut args: Vec<ExpressionNode> = Vec::new();
+    loop {
+        // 引数を読み込む
+        args.push(parse_expression(parser)?);
+
+        // 次が ")" なら処理終了
+        if parser.check(TokenType::RightParen) {
+            break;
+        }
+
+        // そうでないならば次の引数が存在する
+        // f(a, <- 次の引数が来るはず
+        // ","があることを確認する
+        parser.check_advance(TokenType::Comma)?;
+    }
+
+    // 右括弧があることを確認して読み飛ばす
+    parser.check_advance(TokenType::RightParen)?;
+
+    Ok(ExpressionNode::CallOfFunction(Box::new(FunctionCallNode {
+        name: name.clone(),
+        arguments: args,
+    })))
+}
+
+fn parse_call_of_variable(name: String) -> Result<ExpressionNode, ParserError> {
+    Ok(ExpressionNode::CallOfVariable(Box::new(VariableCallNode {
+        name,
+    })))
 }
 
 #[cfg(test)]
