@@ -35,9 +35,6 @@ pub fn parse_declaration_of_variable(parser: &mut Parser) -> Result<Statement, P
     // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;
 
-    // セミコロンを読み飛ばす
-    parser.check_advance(TokenType::Semicolon)?;
-
     Ok(Statement::DeclarationOfVariable(Box::new(
         VariableDeclarationNode {
             name,
