@@ -163,8 +163,7 @@ pub enum ExpressionNode {
     CallOfFunction(Box<FunctionCallNode>),     // 関数呼び出し
     CallOfVariable(Box<VariableCallNode>),     // 識別子
     Literal(Box<LiteralNode>),                 // リテラル
-    #[allow(dead_code)]
-    TypeCast(Box<TypeCastNode>), // 型キャスト
+    TypeCast(Box<TypeCastNode>),               // 型キャスト
 }
 
 /// ## 二項演算ノード

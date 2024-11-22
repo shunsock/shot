@@ -9,7 +9,7 @@ This repository is `Work In Progress`. Note that breaking change may occur.
 ### Parser
 
 - ✅ Declaration of Variable
-- Declaration of Function
+- ✅ Declaration of Function
 - ✅ Primary
 - ✅ Binary
 - ✅ Parenthesis
