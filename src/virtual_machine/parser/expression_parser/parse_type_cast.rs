@@ -37,13 +37,12 @@ pub fn parse_type_cast(
 
 #[cfg(test)]
 mod tests {
+    use crate::virtual_machine::ast::ExpressionNode;
     use crate::virtual_machine::ast::{LiteralNode, LiteralValue, Type, TypeCastNode};
     use crate::virtual_machine::parser::expression_parser::parse_type_cast::parse_type_cast;
     use crate::virtual_machine::parser::parser_error::ParserError;
     use crate::virtual_machine::parser::{Parser, TokenType};
-    use crate::virtual_machine::token::token_type::TokenType::IntegerLiteral;
     use crate::virtual_machine::token::Token;
-    use shot::virtual_machine::ast::ExpressionNode;
 
     fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
         let mut tokens_with_eof = tokens.clone();
@@ -55,7 +54,7 @@ mod tests {
     /// 1 as int -> string;
     #[test]
     fn parse_cast_from_literal() {
-        // 期待される戻り値
+        // 期待される出力
         let expected = ExpressionNode::TypeCast(Box::new(TypeCastNode {
             from_type: Type::Integer,
             to_type: Type::String,
@@ -66,7 +65,6 @@ mod tests {
 
         // テストしたい関数の入力
         let tokens = vec![
-            Token::new(1, 1, IntegerLiteral(1)),
             Token::new(1, 1, TokenType::As),
             Token::new(1, 1, TokenType::IntType),
             Token::new(1, 1, TokenType::TypeCastArrow),
@@ -82,9 +80,8 @@ mod tests {
                 value: LiteralValue::Integer(1),
             })),
         );
-        assert!(result.is_ok());
 
-        // 期待される戻り値と実際の戻り値が一致することを確認
+        assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
 }
