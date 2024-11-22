@@ -47,8 +47,18 @@ impl Parser {
     /// # Returns
     ///
     /// * &Token - 次のトークン
+    #[allow(dead_code)]
     fn peek_next(&self) -> &Token {
         &self.tokens[self.current + 1]
+    }
+
+    /// 次のトークンを確認する
+    ///
+    /// # Returns
+    ///
+    /// * &Token - 次のトークン
+    fn peek_next_next(&self) -> &Token {
+        &self.tokens[self.current + 2]
     }
 
     /// 次のトークンに進む
@@ -84,7 +94,7 @@ impl Parser {
     ///
     /// * `Result<(), ParserError>` - 一致した場合はOk、一致しない場合はエラー
     fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
-        if self.check(token_type.clone()) == false {
+        if !self.check(token_type.clone()) {
             return Err(ParserError::MismatchedToken {
                 expected: token_type,
                 found: self.peek().token_type.clone(),

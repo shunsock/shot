@@ -22,10 +22,34 @@ pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     }
 }
 
+/// ## 宣言文のパース
+///
+/// 宣言文は、変数や関数を宣言する際に用いる文です
+///
+/// ## Syntax
+///
+/// let x: int = *Expression Node*;
+/// let f: fn = () => { *Statements* };
 fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
-    parse_declaration(parser)
+    // letキーワードを読み飛ばす
+    parser.advance();
+
+    // 宣言文をパース
+    let statement: Statement = parse_declaration(parser)?;
+
+    // 終端にセミコロンがあることを確認
+    parser.check_advance(TokenType::Semicolon)?;
+
+    Ok(statement)
 }
 
+/// ## Return文のパース
+///
+/// Return文は関数内で値を返す際に用いる文です
+///
+/// ## Syntax
+///
+/// return *Expression Node*;
 fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // returnキーワードを読み飛ばす
     parser.advance();
@@ -33,6 +57,7 @@ fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError>
     // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;
 
+    // 終端にセミコロンがあることを確認
     parser.check_advance(TokenType::Semicolon)?;
 
     Ok(Statement::Return(Box::new(expr)))
@@ -44,30 +69,12 @@ fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError>
 ///
 /// ## Syntax
 ///
-/// ```text
-/// expression_statement = expression_node ";"
-/// ```
-///
-/// ## Note
-///
-/// 式文は下記のような定義になっています。
-///
-/// ```
-/// pub enum ExpressionNode {
-//     BinaryOperation(Box<BinaryOperationNode>), // 二項演算
-//     CallOfFunction(Box<FunctionCallNode>),     // 関数呼び出し
-//     CallOfVariable(Box<VariableCallNode>),     // 識別子
-//     Literal(Box<LiteralNode>),                 // リテラル
-//     TypeCast(Box<TypeCastNode>),               // 型キャスト
-/// }
-/// ```
-///
-/// このうち `BinaryOperation` などの式は、内部にさらに式を持つことがあります。
+/// *Expression Node*;
 fn parse_expression_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // 式をパース
     let expr: ExpressionNode = parse_expression(parser)?;
 
-    // 式文の終端にセミコロンがあることを確認
+    // 終端にセミコロンがあることを確認
     parser.check_advance(TokenType::Semicolon)?;
 
     Ok(Statement::Expression(expr))
