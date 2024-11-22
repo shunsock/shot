@@ -1,8 +1,7 @@
 use crate::virtual_machine::ast::FunctionDeclarationNode;
 use crate::virtual_machine::ast::{Statement, Type};
 use crate::virtual_machine::parser::parser_error::ParserError;
-use crate::virtual_machine::parser::parser_error::ParserError::MismatchedToken;
-use crate::virtual_machine::parser::parser_error::ParserError::UnexpectedEof;
+use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
 use crate::virtual_machine::parser::statement_parser::parse_statement;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
@@ -110,6 +109,12 @@ fn parse_parameters(parser: &mut Parser) -> Result<Vec<(String, Type)>, ParserEr
 
         // 型情報を取得
         let parameter_type: Type = get_type(parser)?;
+        parser.advance();
+
+        // 次のTokenTypeがRightParenならLoopを抜ける
+        if parser.peek().token_type.clone() == TokenType::RightParen {
+            break;
+        }
 
         // パラメータの間にはカンマが入る
         // f(x: int, ...
