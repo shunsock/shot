@@ -2,6 +2,7 @@
 // Abstract Syntax Tree
 // ---------------------------------------------------------------------
 #[derive(Debug, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub struct AST {
     pub(crate) statements: Vec<(usize, Statement)>,
 }
@@ -162,7 +163,8 @@ pub enum ExpressionNode {
     CallOfFunction(Box<FunctionCallNode>),     // 関数呼び出し
     CallOfVariable(Box<VariableCallNode>),     // 識別子
     Literal(Box<LiteralNode>),                 // リテラル
-    TypeCast(Box<TypeCastNode>),               // 型キャスト
+    #[allow(dead_code)]
+    TypeCast(Box<TypeCastNode>), // 型キャスト
 }
 
 /// ## 二項演算ノード

@@ -84,7 +84,7 @@ impl Parser {
     ///
     /// * `Result<(), ParserError>` - 一致した場合はOk、一致しない場合はエラー
     fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
-        if self.check(token_type.clone()) == false {
+        if !self.check(token_type.clone()) {
             return Err(ParserError::MismatchedToken {
                 expected: token_type,
                 found: self.peek().token_type.clone(),
