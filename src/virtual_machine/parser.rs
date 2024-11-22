@@ -47,8 +47,18 @@ impl Parser {
     /// # Returns
     ///
     /// * &Token - 次のトークン
+    #[allow(dead_code)]
     fn peek_next(&self) -> &Token {
         &self.tokens[self.current + 1]
+    }
+
+    /// 次のトークンを確認する
+    ///
+    /// # Returns
+    ///
+    /// * &Token - 次のトークン
+    fn peek_next_next(&self) -> &Token {
+        &self.tokens[self.current + 2]
     }
 
     /// 次のトークンに進む

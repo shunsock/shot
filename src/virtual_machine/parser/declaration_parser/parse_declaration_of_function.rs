@@ -173,3 +173,65 @@ fn get_type(parser: &mut Parser) -> Result<Type, ParserError> {
         }),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::virtual_machine::ast::{FunctionDeclarationNode, Statement, Type};
+    use crate::virtual_machine::parser::declaration_parser::parse_declaration_of_function::parse_declaration_of_function;
+    use crate::virtual_machine::parser::parser_error::ParserError;
+    use crate::virtual_machine::parser::{Parser, TokenType};
+    use crate::virtual_machine::token::Token;
+
+    fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
+        let mut tokens_with_eof = tokens.clone();
+        tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
+        Parser::new(tokens_with_eof)
+    }
+
+    /// 引数のない関数宣言のテスト
+    /// f: fn = (): void {}
+    #[test]
+    fn parses_string_variable_declaration() {
+        // 生成されるAST Node
+        let expected = Box::new(FunctionDeclarationNode {
+            name: "f".to_string(),
+            params: vec![],
+            return_type: Type::Void,
+            body: vec![],
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // let f: fn = (): void { return none; };
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 2, TokenType::Identifier("f".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::Fn),
+            Token::new(1, 5, TokenType::Equal),
+            Token::new(1, 5, TokenType::LeftParen),
+            Token::new(1, 5, TokenType::RightParen),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::VoidType),
+            Token::new(1, 5, TokenType::LeftBrace),
+            Token::new(1, 5, TokenType::Return),
+            Token::new(1, 4, TokenType::NoneLiteral),
+            Token::new(1, 7, TokenType::Semicolon),
+            Token::new(1, 5, TokenType::RightBrace),
+            Token::new(1, 7, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_function(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let variable_declaration_node: Box<FunctionDeclarationNode> = match result.unwrap() {
+            Statement::DeclarationOfFunction(node) => node,
+            _ => panic!("Expected a DeclarationOfFunction"),
+        };
+        assert_eq!(variable_declaration_node.name, expected.name);
+        assert_eq!(variable_declaration_node.params, expected.params);
+        assert_eq!(variable_declaration_node.return_type, expected.return_type);
+    }
+}
