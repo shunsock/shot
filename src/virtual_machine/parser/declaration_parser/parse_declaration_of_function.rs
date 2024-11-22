@@ -111,6 +111,9 @@ fn parse_parameters(parser: &mut Parser) -> Result<Vec<(String, Type)>, ParserEr
         let parameter_type: Type = get_type(parser)?;
         parser.advance();
 
+        // 引数と型の組みをpush
+        parameters.push((parameter_name, parameter_type));
+
         // 次のTokenTypeがRightParenならLoopを抜ける
         if parser.peek().token_type.clone() == TokenType::RightParen {
             break;
@@ -119,9 +122,6 @@ fn parse_parameters(parser: &mut Parser) -> Result<Vec<(String, Type)>, ParserEr
         // パラメータの間にはカンマが入る
         // f(x: int, ...
         parser.check_advance(TokenType::Comma)?;
-
-        // 引数と型の組みをpush
-        parameters.push((parameter_name, parameter_type));
     }
     Ok(parameters)
 }
@@ -247,7 +247,7 @@ mod tests {
         // 生成されるAST Node
         let expected = Box::new(FunctionDeclarationNode {
             name: "f".to_string(),
-            params: vec![],
+            params: vec![(String::from("x"), Type::String)],
             return_type: Type::Void,
             body: vec![],
         });
@@ -264,6 +264,63 @@ mod tests {
             Token::new(1, 5, TokenType::Identifier("x".to_string())),
             Token::new(1, 3, TokenType::Colon),
             Token::new(1, 4, TokenType::StringType),
+            Token::new(1, 5, TokenType::RightParen),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::VoidType),
+            Token::new(1, 5, TokenType::LeftBrace),
+            Token::new(1, 5, TokenType::Return),
+            Token::new(1, 4, TokenType::NoneLiteral),
+            Token::new(1, 7, TokenType::Semicolon),
+            Token::new(1, 5, TokenType::RightBrace),
+            Token::new(1, 7, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        let result: Result<Statement, ParserError> = parse_declaration_of_function(&mut parser);
+        assert!(result.is_ok());
+
+        // テストしたい関数の出力と期待値を比較
+        let variable_declaration_node: Box<FunctionDeclarationNode> = match result.unwrap() {
+            Statement::DeclarationOfFunction(node) => node,
+            _ => panic!("Expected a DeclarationOfFunction"),
+        };
+        assert_eq!(variable_declaration_node.name, expected.name);
+        assert_eq!(variable_declaration_node.params, expected.params);
+        assert_eq!(variable_declaration_node.return_type, expected.return_type);
+    }
+
+    /// 引数が複数の関数宣言のテスト
+    /// f: fn = (x: int, y: float): void { return none; };
+    #[test]
+    fn parse_function_declaration_with_parameters() {
+        // 生成されるAST Node
+        let expected = Box::new(FunctionDeclarationNode {
+            name: "f".to_string(),
+            params: vec![
+                (String::from("x"), Type::Integer),
+                (String::from("y"), Type::Float),
+            ],
+            return_type: Type::Void,
+            body: vec![],
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // let f: fn = (x: string): void { return none; };
+        // Let token は Let文の処理 で消費されていることに注意
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 2, TokenType::Identifier("f".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::Fn),
+            Token::new(1, 5, TokenType::Equal),
+            Token::new(1, 5, TokenType::LeftParen),
+            Token::new(1, 5, TokenType::Identifier("x".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::IntType),
+            Token::new(1, 5, TokenType::Comma),
+            Token::new(1, 5, TokenType::Identifier("y".to_string())),
+            Token::new(1, 3, TokenType::Colon),
+            Token::new(1, 4, TokenType::FloatType),
             Token::new(1, 5, TokenType::RightParen),
             Token::new(1, 3, TokenType::Colon),
             Token::new(1, 4, TokenType::VoidType),
