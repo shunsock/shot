@@ -50,6 +50,8 @@ mod tests {
         Parser::new(tokens_with_eof)
     }
 
+    // 正常系
+
     /// TypeCastのテスト
     /// 1 as int -> string;
     #[test]
@@ -83,5 +85,103 @@ mod tests {
 
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
+    }
+
+    // 異常系
+
+    /// asがない場合のテスト
+    /// 1 type -> type # error
+    #[test]
+    fn fail_as_is_missing() {
+        // テストしたい関数の入力
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::IntType),
+            Token::new(1, 1, TokenType::TypeCastArrow),
+            Token::new(1, 1, TokenType::StringType),
+            Token::new(1, 1, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていることを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_type_cast(
+            &mut parser,
+            ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(1),
+            })),
+        );
+
+        assert!(result.is_err());
+    }
+
+    /// from_typeがない場合のテスト
+    /// 1 as -> type # error
+    #[test]
+    fn fail_from_type_is_missing() {
+        // テストしたい関数の入力
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::As),
+            Token::new(1, 1, TokenType::TypeCastArrow),
+            Token::new(1, 1, TokenType::StringType),
+            Token::new(1, 1, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていることを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_type_cast(
+            &mut parser,
+            ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(1),
+            })),
+        );
+
+        assert!(result.is_err());
+    }
+
+    /// -> がない場合のテスト
+    /// 1 as int type # error
+    #[test]
+    fn fail_arrow_is_missing() {
+        // テストしたい関数の入力
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::As),
+            Token::new(1, 1, TokenType::IntType),
+            Token::new(1, 1, TokenType::StringType),
+            Token::new(1, 1, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていることを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_type_cast(
+            &mut parser,
+            ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(1),
+            })),
+        );
+
+        assert!(result.is_err());
+    }
+
+    /// to_typeがない場合のテスト
+    /// 1 as int -> # error
+    #[test]
+    fn fail_to_type_is_missing() {
+        // テストしたい関数の入力
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::As),
+            Token::new(1, 1, TokenType::IntType),
+            Token::new(1, 1, TokenType::TypeCastArrow),
+            Token::new(1, 1, TokenType::Semicolon),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テストしたい関数の出力 (エラーが出ていることを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_type_cast(
+            &mut parser,
+            ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(1),
+            })),
+        );
+
+        assert!(result.is_err());
     }
 }
