@@ -110,7 +110,7 @@ Also, you can't declare a function without a return type.
 let f: fn = (x: int, y: int) {
   return x + y;
 }; # error
-let f: fn = (x: int, y: int): void {
+let f: fn = (x: int, y: int): int {
   return x + y;
 }; # ok
 ```
