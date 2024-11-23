@@ -1,0 +1,13 @@
+let a: int = 0;
+let b: float = 0.0;
+let c: string = "shot";
+let d: void = none;
+
+# Any expression can be assigned to a variable
+# as long as the type matches. (Evaluated at runtime)
+let e: int = 1 + 1;
+let f: int = "Hello" + " " + "World";
+let g: int = 0 as int -> float;
+# let h: int = a + 1; 🐛
+# let i: float = a as int -> float + 1.0; 🐛
+# let j: int = some_function(i: 1) + 1; 🐛

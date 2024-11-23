@@ -1,0 +1,12 @@
+let f: fn = (a: int, b: float, c: string, d: void): void {
+    print(v: a);
+    print(v: b);
+    print(v: c);
+    print(v: d);
+    return none;
+};
+
+# let g: fn = (x: int): int {
+#     return x + 1;
+# };
+# 🐛
