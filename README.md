@@ -123,6 +123,35 @@ let f: fn = (x: int, y: int): void {
 }; # error
 ```
 
+### Call of Variable
+
+You can call a variable.
+
+```shot
+let a: int = 1;
+let b: int = a;
+```
+
+### Call of Function
+
+You can call a function.
+
+```shot
+let f: fn = (x: int, y: int): int {
+  return x + y;
+};
+let a: int = f(x: 1, y: 2);
+```
+
+you must pass the argument with the name of the parameter.
+
+```shot
+let f: fn = (x: int, y: int): int {
+  return x + y;
+};
+let a: int = f(1, 2); # error
+```
+
 ### Binary Operation
 
 Shot supports binary operation.
