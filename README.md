@@ -4,8 +4,6 @@
 
 This repository is `Work In Progress`. Note that breaking change may occur.
 
-## WIP
-
 ### Parser
 
 - ✅ Declaration of Variable
@@ -68,40 +66,139 @@ task install
 task uninstall
 ```
 
-## BNF
+## Getting Started
 
-This is BNF of Shot Language.
+### Comment
 
+```shot
+# you can use comment
 ```
-<Program> ::= <StatementList>
-<StatementList> ::= <Statement> ";" | <Statement> ";" <StatementList>
 
-<Statement> ::= <VariableDeclaration>
-              | <FunctionDeclaration>
-              | <ReturnStatement>
-              | <Expression>
+### declaration of variable
 
-<VariableDeclaration> ::= "let" <Identifier> ":" <Type> "=" <Expression>
+```shot
+let a: int = 1;
+let b: string = "hello";
+let c: void = none; # none is value for void type
+```
 
-<FunctionDeclaration> ::= "let" <Identifier> ":" "fn" "=" "(" <ParameterList> ")" ":" <Type> "{" <StatementList> "return" <Expression> ";"}"
+You can't declare a variable without a type.
 
-<ReturnStatement> ::= "return" <Expression>
+```shot
+let a = 1; # error
+```
 
-<Expression> ::= <Literal>
-               | <Identifier>
-               | <FunctionCall>
-               | <BinaryOperation>
-               | <TypeCast>
+### declaration of function
 
-<Literal> ::= <IntegerLiteral> | <FloatLiteral> | <StringLiteral> | "none"
+```shot
+let f: fn = (x: int, y: int): int {
+  return x + y;
+};
+```
 
-<FunctionCall> ::= <Identifier> "(" <ArgumentList> ")"
+You can't declare a function without a type. 
 
-<BinaryOperation> ::= <Expression> <BinaryOperator> <Expression>
+```shot
+let f = (x, y): int {
+  return x + y;
+}; # error
+```
 
-<TypeCast> ::= <Expression> "as" <Type> "->" <Type>
+Also, you can't declare a function without a return type.
 
-<Type> ::= "int" | "float" | "string" | "void" | "fn"
+```shot
+let f: fn = (x: int, y: int) {
+  return x + y;
+}; # error
+let f: fn = (x: int, y: int): void {
+  return x + y;
+}; # ok
+```
 
-<ArgumentList> ::= <Expression> | <Expression> "," <ArgumentList>
+Finally, you must declare a function with return statement.
+
+```shot
+let f: fn = (x: int, y: int): void {
+  x + y;
+}; # error
+```
+
+### Call of Variable
+
+You can call a variable.
+
+```shot
+let a: int = 1;
+let b: int = a;
+```
+
+### Call of Function
+
+You can call a function.
+
+```shot
+let f: fn = (x: int, y: int): int {
+  return x + y;
+};
+let a: int = f(x: 1, y: 2);
+```
+
+you must pass the argument with the name of the parameter.
+
+```shot
+let f: fn = (x: int, y: int): int {
+  return x + y;
+};
+let a: int = f(1, 2); # error
+```
+
+### Binary Operation
+
+Shot supports binary operation.
+
+```shot
+let a: int = 1 + 2;
+let b: int = 1 - 2;
+let c: int = 1 * 2;
+let d: int = 1 / 2;
+```
+
+### Parenthesis
+
+You can use parenthesis to change the order of operation.
+
+```shot
+let a: int = (1 + 2) * 3;
+```
+
+### Semicolon (Where should we put semicolon?)
+
+You can put semicolon at the end of the statement.
+
+```shot
+# Expression
+1 + 2;
+
+# variable declaration
+let a: int = 1;
+
+# function declaration
+let f: fn = (x: int, y: int): void {
+  return x + y;
+};
+
+# Return
+return 0;
+```
+
+Speaking of implementation, what I said "statement" is the following.
+
+```rust
+#[derive(Debug, PartialEq, Clone)]
+pub enum Statement {
+    Expression(ExpressionNode),
+    DeclarationOfFunction(Box<FunctionDeclarationNode>),
+    DeclarationOfVariable(Box<VariableDeclarationNode>),
+    Return(Box<ExpressionNode>),
+}
 ```

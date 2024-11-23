@@ -54,10 +54,26 @@ fn parse_call_of_function(
     }
 
     // 引数がある場合の処理
-    let mut args: Vec<ExpressionNode> = Vec::new();
+    let mut args: Vec<(String, ExpressionNode)> = Vec::new();
     loop {
+        let argument_name = match parser.peek().token_type.clone() {
+            TokenType::Identifier(name) => name,
+            _ => {
+                return Err(ParserError::UnexpectedTokenType {
+                    token: parser.peek().token_type.clone(),
+                    line: parser.peek().line,
+                    char_pos: parser.peek().char_pos,
+                })
+            }
+        };
+        // 引数名を読み飛ばす
+        parser.advance();
+
+        // ":"を読み飛ばす
+        parser.check_advance(TokenType::Colon)?;
+
         // 引数を読み込む
-        args.push(parse_expression(parser)?);
+        args.push((argument_name, parse_expression(parser)?));
 
         // 次が ")" なら処理終了
         if parser.check(TokenType::RightParen) {
@@ -134,22 +150,27 @@ mod tests {
     }
 
     /// 引数が一つ存在する関数のパースが可能か確認するテスト
-    /// f(0);
+    /// f(v: 0);
     #[test]
     fn parse_function_with_an_argument() {
         // 生成されるAST Node
         let expected: Box<FunctionCallNode> = Box::new(FunctionCallNode {
             name: "f".to_string(),
-            arguments: vec![ExpressionNode::Literal(Box::new(LiteralNode {
-                value: LiteralValue::Integer(0),
-            }))],
+            arguments: vec![(
+                "v".to_string(),
+                ExpressionNode::Literal(Box::new(LiteralNode {
+                    value: LiteralValue::Integer(0),
+                })),
+            )],
         });
 
         // テストする関数の入力である、Token列, Parserの生成
-        // f();
+        // f(v: 0);
         let tokens: Vec<Token> = vec![
             Token::new(1, 1, TokenType::Identifier("f".to_string())),
             Token::new(1, 2, TokenType::LeftParen),
+            Token::new(1, 1, TokenType::Identifier("v".to_string())),
+            Token::new(1, 2, TokenType::Colon),
             Token::new(1, 3, TokenType::IntegerLiteral(0)),
             Token::new(1, 3, TokenType::RightParen),
             Token::new(1, 4, TokenType::Semicolon),
@@ -169,29 +190,39 @@ mod tests {
     }
 
     /// 引数が複数存在する関数のパースが可能か確認するテスト
-    /// f(0, "shunsock");
+    /// f(x: 0, y: "shunsock");
     #[test]
     fn parse_function_with_arguments() {
         // 生成されるAST Node
         let expected: Box<FunctionCallNode> = Box::new(FunctionCallNode {
             name: "f".to_string(),
             arguments: vec![
-                ExpressionNode::Literal(Box::new(LiteralNode {
-                    value: LiteralValue::Integer(0),
-                })),
-                ExpressionNode::Literal(Box::new(LiteralNode {
-                    value: LiteralValue::String("shunsock".to_string()),
-                })),
+                (
+                    "x".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::Integer(0),
+                    })),
+                ),
+                (
+                    "y".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::String("shunsock".to_string()),
+                    })),
+                ),
             ],
         });
 
         // テストする関数の入力である、Token列, Parserの生成
-        // f();
+        // f(x: 0, y: "shunsock");
         let tokens: Vec<Token> = vec![
             Token::new(1, 1, TokenType::Identifier("f".to_string())),
             Token::new(1, 2, TokenType::LeftParen),
+            Token::new(1, 1, TokenType::Identifier("x".to_string())),
+            Token::new(1, 2, TokenType::Colon),
             Token::new(1, 3, TokenType::IntegerLiteral(0)),
             Token::new(1, 3, TokenType::Comma),
+            Token::new(1, 1, TokenType::Identifier("y".to_string())),
+            Token::new(1, 2, TokenType::Colon),
             Token::new(1, 3, TokenType::StringLiteral("shunsock".to_string())),
             Token::new(1, 3, TokenType::RightParen),
             Token::new(1, 4, TokenType::Semicolon),
@@ -220,7 +251,7 @@ mod tests {
         });
 
         // テストする関数の入力である、Token列, Parserの生成
-        // f();
+        // x;
         let tokens: Vec<Token> = vec![
             Token::new(1, 1, TokenType::Identifier("x".to_string())),
             Token::new(1, 4, TokenType::Semicolon),
@@ -242,7 +273,7 @@ mod tests {
     // 異常系テスト
 
     /// 引数が複数存在する関数のパースで引数の間にカンマがない時にエラーを出力するか確認するテスト
-    /// f(0 "shunsock");
+    /// f(x: 0 y: "shunsock");
     #[test]
     fn parse_function_with_arguments_but_without_comma() {
         // テストする関数の入力である、Token列, Parserの生成
@@ -250,15 +281,19 @@ mod tests {
         let tokens: Vec<Token> = vec![
             Token::new(1, 1, TokenType::Identifier("f".to_string())),
             Token::new(1, 2, TokenType::LeftParen),
+            Token::new(1, 1, TokenType::Identifier("x".to_string())),
+            Token::new(1, 2, TokenType::Colon),
             Token::new(1, 3, TokenType::IntegerLiteral(0)),
             // ここにカンマが必要
+            Token::new(1, 1, TokenType::Identifier("y".to_string())),
+            Token::new(1, 2, TokenType::Colon),
             Token::new(1, 3, TokenType::StringLiteral("shunsock".to_string())),
             Token::new(1, 3, TokenType::RightParen),
             Token::new(1, 4, TokenType::Semicolon),
         ];
         let mut parser: Parser = create_parser_with_tokens(tokens);
 
-        // テストしたい関数の出力 (エラーが出ていないことを確認)
+        // テストしたい関数の出力 (エラーが出ることを確認)
         let result: Result<ExpressionNode, ParserError> = parse_identifier_or_call(&mut parser);
         assert!(result.is_err());
     }

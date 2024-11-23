@@ -215,8 +215,8 @@ pub struct BinaryOperationNode {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FunctionCallNode {
-    pub name: String,                   // 呼び出される関数名
-    pub arguments: Vec<ExpressionNode>, // 関数に渡す引数リスト
+    pub name: String,                             // 呼び出される関数名
+    pub arguments: Vec<(String, ExpressionNode)>, // 関数に渡す引数リスト
 }
 
 /// ## 変数呼び出しノード
