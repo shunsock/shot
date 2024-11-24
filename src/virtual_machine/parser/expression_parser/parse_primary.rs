@@ -16,6 +16,10 @@ use crate::virtual_machine::token::token_type::TokenType;
 /// * `ParserError` - パーサーエラー
 pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     let expr = match parser.peek().token_type.clone() {
+        TokenType::LeftParen => {
+            // 括弧内の式のパース
+            parse_parenthesized(parser)?
+        }
         // 整数リテラル
         TokenType::IntegerLiteral(value) => {
             parser.advance();
@@ -49,11 +53,6 @@ pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError>
             // 識別子または関数呼び出しのパース
             parse_identifier_or_call(parser)?
         }
-        // 括弧付きの式
-        TokenType::LeftParen => {
-            // 括弧付き式のパース
-            parse_parenthesized(parser)?
-        }
         // 他のリテラルが必要な場合に追加
         _ => {
             return Err(ParserError::UnexpectedTokenType {
@@ -79,17 +78,6 @@ mod tests {
 
     fn create_parser_with_token(token: Token) -> Parser {
         Parser::new(vec![token, Token::new(1, 1, TokenType::Eof)])
-    }
-
-    /// 行と位置を指定したトークンを持つパーサーを生成する
-    fn create_parser_with_tokens() -> Parser {
-        let tokens = vec![
-            Token::new(1, 2, TokenType::IntegerLiteral(42)),
-            Token::new(2, 5, TokenType::FloatLiteral(3.14)),
-            Token::new(3, 10, TokenType::StringLiteral("test".to_string())),
-            Token::new(4, 1, TokenType::NoneLiteral),
-        ];
-        Parser::new(tokens)
     }
 
     /// 整数リテラルをパース可能か確認するテスト
