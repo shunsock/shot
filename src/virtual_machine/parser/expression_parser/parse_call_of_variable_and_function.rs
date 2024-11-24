@@ -47,6 +47,8 @@ fn parse_call_of_function(
 
     // 引数がない場合のearly return
     if parser.check(TokenType::RightParen) {
+        // 右括弧があることを確認して読み飛ばす
+        parser.advance();
         return Ok(ExpressionNode::CallOfFunction(Box::new(FunctionCallNode {
             name: name.clone(),
             arguments: vec![],
