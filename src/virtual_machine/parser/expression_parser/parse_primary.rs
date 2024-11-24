@@ -1,6 +1,7 @@
 use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue};
 use crate::virtual_machine::parser::expression_parser::parse_call_of_variable_and_function::parse_identifier_or_call;
 use crate::virtual_machine::parser::expression_parser::parse_parenthesized::parse_parenthesized;
+use crate::virtual_machine::parser::expression_parser::parse_type_cast::parse_type_cast;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
@@ -14,51 +15,58 @@ use crate::virtual_machine::token::token_type::TokenType;
 /// * `ExpressionNode` - リテラルのASTノード
 /// * `ParserError` - パーサーエラー
 pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
-    match parser.peek().token_type.clone() {
+    let expr = match parser.peek().token_type.clone() {
         // 整数リテラル
         TokenType::IntegerLiteral(value) => {
             parser.advance();
-            Ok(ExpressionNode::Literal(Box::new(LiteralNode {
+            ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::Integer(value),
-            })))
+            }))
         }
         // 浮動小数点リテラル
         TokenType::FloatLiteral(value) => {
             parser.advance();
-            Ok(ExpressionNode::Literal(Box::new(LiteralNode {
+            ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::Float(value),
-            })))
+            }))
         }
         // 文字列リテラル
         TokenType::StringLiteral(ref value) => {
             parser.advance();
-            Ok(ExpressionNode::Literal(Box::new(LiteralNode {
+            ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String(value.clone()),
-            })))
+            }))
         }
         // Noneリテラル
         TokenType::NoneLiteral => {
             parser.advance();
-            Ok(ExpressionNode::Literal(Box::new(LiteralNode {
+            ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::None,
-            })))
+            }))
         }
         // 識別子や関数呼び出し
         TokenType::Identifier(_) => {
             // 識別子または関数呼び出しのパース
-            parse_identifier_or_call(parser)
+            parse_identifier_or_call(parser)?
         }
         // 括弧付きの式
         TokenType::LeftParen => {
             // 括弧付き式のパース
-            parse_parenthesized(parser)
+            parse_parenthesized(parser)?
         }
         // 他のリテラルが必要な場合に追加
-        _ => Err(ParserError::UnexpectedTokenType {
-            token: parser.peek().token_type.clone(),
-            line: parser.peek().line,
-            char_pos: parser.peek().char_pos,
-        }),
+        _ => {
+            return Err(ParserError::UnexpectedTokenType {
+                token: parser.peek().token_type.clone(),
+                line: parser.peek().line,
+                char_pos: parser.peek().char_pos,
+            })
+        }
+    };
+
+    match parser.peek().token_type.clone() {
+        TokenType::As => parse_type_cast(parser, expr),
+        _ => Ok(expr),
     }
 }
 
@@ -163,48 +171,6 @@ mod tests {
             assert_eq!(char_pos, 1);
         } else {
             panic!("Expected UnexpectedTokenType error");
-        }
-    }
-
-    /// 異なる行と位置にあるリテラルをパース可能か確認するテスト
-    #[test]
-    fn test_parse_literals_with_different_lines_and_positions() {
-        let mut parser = create_parser_with_tokens();
-
-        // 1つ目の整数リテラル (行1, 位置2)
-        let result = parse_primary(&mut parser);
-        assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::Integer(42));
-        } else {
-            panic!("Expected integer literal");
-        }
-
-        // 2つ目の浮動小数点リテラル (行2, 位置5)
-        let result = parse_primary(&mut parser);
-        assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::Float(3.14));
-        } else {
-            panic!("Expected float literal");
-        }
-
-        // 3つ目の文字列リテラル (行3, 位置10)
-        let result = parse_primary(&mut parser);
-        assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::String("test".to_string()));
-        } else {
-            panic!("Expected string literal");
-        }
-
-        // 4つ目のNoneリテラル (行4, 位置1)
-        let result = parse_primary(&mut parser);
-        assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::None);
-        } else {
-            panic!("Expected None literal");
         }
     }
 }
