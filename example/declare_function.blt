@@ -9,3 +9,7 @@ let f: fn = (a: int, b: float, c: string, d: void): void {
 let g: fn = (x: int): int {
     return x + 1;
 };
+
+let h: fn = (x: int): float {
+    return (x + 1) as int -> float;
+};
