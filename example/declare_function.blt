@@ -6,7 +6,6 @@ let f: fn = (a: int, b: float, c: string, d: void): void {
     return none;
 };
 
-# let g: fn = (x: int): int {
-#     return x + 1;
-# };
-# 🐛
+let g: fn = (x: int): int {
+    return x + 1;
+};
