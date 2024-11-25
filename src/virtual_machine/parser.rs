@@ -1,12 +1,12 @@
 mod core;
-mod statement_parser;
 pub mod declaration_parser;
 pub mod expression_parser;
 pub mod parser_error;
+mod statement_parser;
 
 use crate::virtual_machine::ast::{Statement, AST};
-use crate::virtual_machine::token::Token;
 use crate::virtual_machine::token::token_type::TokenType;
+use crate::virtual_machine::token::Token;
 use parser_error::ParserError;
 use statement_parser::parse_statement;
 
