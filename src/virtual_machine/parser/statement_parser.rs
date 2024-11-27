@@ -1,14 +1,19 @@
 use crate::virtual_machine::ast::{ExpressionNode, Statement};
-use crate::virtual_machine::parser::declaration_parser::parse_declaration;
-use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
+use crate::virtual_machine::parser::declaration_parser::parse_declaration;
+use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::token::token_type::TokenType;
 
 /// 文のパース
 ///
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
+///
 /// # Syntax
-/// 文は、一単位です。let文やreturn文、式文などが含まれます
+/// 文は、一単位です。let文やreturn文、式文などが含まれます。
 ///
 /// ## Example
 /// - let文: `let x: int = 0;`
@@ -33,8 +38,13 @@ pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
 
 /// 宣言文のパース
 ///
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
+///
 /// # Syntax
-/// 宣言文は、変数や関数を宣言する際に用いる文です
+/// 宣言文は文の一種で、変数や関数を宣言する際に用いる文です。
 ///
 /// ## Example
 /// - 変数宣言: `let x: int = *Expression Node*;`
@@ -52,10 +62,15 @@ fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     Ok(statement)
 }
 
-/// 戻り値を返す文のパース
+/// リターン文のパース
+///
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
 ///
 /// ## Syntax
-/// 戻り値を返す文は関数内で値を返す際に用いる文です
+/// リターン文は文の一種で、関数内で値を返す際に用います。
 ///
 /// ## Example
 /// - `return *Expression Node*;`
@@ -74,8 +89,13 @@ fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError>
 
 /// 式文のパース
 ///
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
+///
 /// ## Syntax
-/// 式文は、式の末尾にセミコロンがついたものです。
+/// 式文は文の一種で、式の末尾にセミコロンがついたものです。
 ///
 /// ## Example
 /// *Expression Node*;
