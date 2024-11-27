@@ -1,11 +1,31 @@
 use crate::virtual_machine::ast::VariableDeclarationNode;
 use crate::virtual_machine::ast::{ExpressionNode, Statement, Type};
-use crate::virtual_machine::parser::core::type_token_to_type;
-use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
+use crate::virtual_machine::parser::core::type_token_to_type;
+use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::token::token_type::TokenType;
 
+
+/// 変数宣言文をパースする
+///
+/// # Returns
+/// - `Result<Statement, ParserError>`: パース結果
+///   - `Statement`: パース結果のASTノード
+///   - `ParserError`: エラー情報
+///
+/// # Syntax
+/// 変数宣言文は、プログラムで用いる変数を宣言する文の一つ。
+///
+/// - 変数宣言文`variable_declaration = "let" identifier ":" type "=" expression ";"`
+///
+/// # Examples
+/// - string型の変数nameを宣言: `let name: string = "shunsock";`
+/// - int型の変数numを宣言: `let num: int = 0;`
+///
+/// 変数宣言時に代入する値は、式によって定められる。
+///
+/// - BinaryOperationが式である事例: `let num: int = 1 + 2;`
 pub fn parse_declaration_of_variable(parser: &mut Parser) -> Result<Statement, ParserError> {
     // 名前を読み取る
     let name: String = match parser.peek().token_type.clone() {
