@@ -10,16 +10,29 @@ use crate::virtual_machine::token::Token;
 use parser_error::ParserError;
 use statement_parser::parse_statement;
 
+/// Token列をASTに変換するパーサー
+///
+/// # Fields
+/// - `tokens`: トークン列
+/// - `current`: 現在のトークンのインデックス
 pub struct Parser {
     tokens: Vec<Token>,
     current: usize,
 }
 
 impl Parser {
+    /// 初期化
+    ///
+    /// # Arguments
+    /// - `tokens`: トークン列
     pub fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, current: 0 }
     }
 
+    /// トークン列をASTに変換する
+    ///
+    /// # Returns
+    /// - `Result<AST, ParserError>`: 変換結果
     pub fn parse(&mut self) -> Result<AST, ParserError> {
         let mut ast: AST = AST::new();
 
@@ -36,8 +49,7 @@ impl Parser {
     /// 現在のトークンを見る
     ///
     /// # Returns
-    ///
-    /// * &Token - 現在のトークン
+    /// - `&Token`: 現在のトークン
     fn peek(&self) -> &Token {
         &self.tokens[self.current]
     }
@@ -45,8 +57,7 @@ impl Parser {
     /// 次のトークンを確認する
     ///
     /// # Returns
-    ///
-    /// * &Token - 次のトークン
+    /// - `&Token`: 次のトークン
     #[allow(dead_code)]
     fn peek_next(&self) -> &Token {
         &self.tokens[self.current + 1]
@@ -55,17 +66,24 @@ impl Parser {
     /// 次のトークンを確認する
     ///
     /// # Returns
-    ///
-    /// * &Token - 次のトークン
+    /// - `&Token`: 次のトークン
     fn peek_next_next(&self) -> &Token {
         &self.tokens[self.current + 2]
     }
 
     /// 次のトークンに進む
     ///
-    /// # Returns
+    /// # Feature
+    /// - 現在のトークンを進める
+    /// - 進めた後のトークンを返す
     ///
-    /// * &Token - 進めた後の時点で、現在のトークン
+    /// # Returns
+    /// - `&Token`: 進めた後の時点で、現在のトークン
+    ///
+    /// # Example
+    /// `Token`列が `IntegerLiteral(42), Plus` で、
+    /// Parserの状態が `current = 0` の場合、
+    /// `advance` を呼び出すと、`Plus` が返される。
     fn advance(&mut self) -> &Token {
         self.current += 1;
         &self.tokens[self.current - 1]
@@ -74,12 +92,10 @@ impl Parser {
     /// 次のトークンが指定したトークンタイプか確認する
     ///
     /// # Arguments
-    ///
-    /// * `token_type` - 確認したいトークンタイプ
+    /// - `token_type`: 確認したいトークンタイプ
     ///
     /// # Returns
-    ///
-    /// * `token_type` - 確認したいトークンタイプ
+    /// - `token_type`: 確認したいトークンタイプ
     fn check(&self, token_type: TokenType) -> bool {
         self.peek().token_type == token_type
     }
@@ -87,12 +103,10 @@ impl Parser {
     /// 次のトークンが指定したトークンタイプか確認し、一致しない場合はエラーを返す
     ///
     /// # Arguments
-    ///
-    /// * `token_type` - 確認したいトークンタイプ
+    /// - `token_type`: 確認したいトークンタイプ
     ///
     /// # Returns
-    ///
-    /// * `Result<(), ParserError>` - 一致した場合はOk、一致しない場合はエラー
+    /// - `Result<(), ParserError>`: 一致した場合はOk、一致しない場合はエラー
     fn check_advance(&mut self, token_type: TokenType) -> Result<(), ParserError> {
         if !self.check(token_type.clone()) {
             return Err(ParserError::MismatchedToken {

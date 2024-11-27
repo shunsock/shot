@@ -6,14 +6,24 @@ use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
-/// Literalをparseする関数
-///
-/// # Arguments
-/// * `parser` - パーサー
+/// Primary表現をparseする関数
 ///
 /// # Returns
-/// * `ExpressionNode` - リテラルのASTノード
-/// * `ParserError` - パーサーエラー
+/// - `Result<ExpressionNode, ParserError>` - パース結果
+///  - `ExpressionNode` - 式ノード
+///  - `ParserError` - パースエラー
+///
+/// # Syntax
+/// `integer_literal | float_literal | string_literal | none_literal | variable_call | function_call | parenthesized`
+///
+/// # Example
+/// - `42`
+/// - `3.14`
+/// - `"Hello"`
+/// - `None`
+/// - `a`
+/// - `add(1, 2)`
+/// - `(1 + 2)`
 pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     let expr = match parser.peek().token_type.clone() {
         TokenType::LeftParen => {

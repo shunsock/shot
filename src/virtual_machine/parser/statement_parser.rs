@@ -5,6 +5,20 @@ use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
 
+/// 文のパース
+///
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
+///
+/// # Syntax
+/// 文は、一単位です。let文やreturn文、式文などが含まれます。
+///
+/// ## Example
+/// - let文: `let x: int = 0;`
+/// - return文: `return 0;`
+/// - expression文: `0;`
 pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     match parser.peek().token_type.clone() {
         TokenType::Let => {
@@ -16,20 +30,25 @@ pub fn parse_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
             parse_return_statement(parser)
         }
         _ => {
-            // 式文（Expression Statement）のパース
+            // Expression文のパース
             parse_expression_statement(parser)
         }
     }
 }
 
-/// ## 宣言文のパース
+/// 宣言文のパース
 ///
-/// 宣言文は、変数や関数を宣言する際に用いる文です
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
 ///
-/// ## Syntax
+/// # Syntax
+/// 宣言文は文の一種で、変数や関数を宣言する際に用いる文です。
 ///
-/// let x: int = *Expression Node*;
-/// let f: fn = () => { *Statements* };
+/// ## Example
+/// - 変数宣言: `let x: int = *Expression Node*;`
+/// - 関数宣言: `let f: fn = () => { *Statements* };`
 fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // letキーワードを読み飛ばす
     parser.advance();
@@ -43,13 +62,18 @@ fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     Ok(statement)
 }
 
-/// ## Return文のパース
+/// リターン文のパース
 ///
-/// Return文は関数内で値を返す際に用いる文です
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
 ///
 /// ## Syntax
+/// リターン文は文の一種で、関数内で値を返す際に用います。
 ///
-/// return *Expression Node*;
+/// ## Example
+/// - `return *Expression Node*;`
 fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // returnキーワードを読み飛ばす
     parser.advance();
@@ -63,12 +87,17 @@ fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError>
     Ok(Statement::Return(Box::new(expr)))
 }
 
-/// # 式文（Expression Statement）のパース
+/// 式文のパース
 ///
-/// 式文は、式の末尾にセミコロンがついたものです。
+/// # Returns
+/// - `Result<Statement, ParserError>`:
+///    - 成功: Statement (ASTの一単位)
+///    - 失敗: ParserError
 ///
 /// ## Syntax
+/// 式文は文の一種で、式の末尾にセミコロンがついたものです。
 ///
+/// ## Example
 /// *Expression Node*;
 fn parse_expression_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // 式をパース

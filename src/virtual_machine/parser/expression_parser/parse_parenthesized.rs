@@ -4,15 +4,26 @@ use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
-/// # 括弧内の式をパース
+/// 括弧式をパース
 ///
-/// ## Abstract
+/// # Returns
+/// - `Result<ExpressionNode, ParserError>` - パース結果
+///   - `ExpressionNode` - 式ノード
+///   - `ParserError` - パースエラー
 ///
-/// 括弧内の式をパースします。
+/// ## Syntax
 ///
-/// ## Note
+/// 括弧式は 式を `(` と `)` で囲んだ式です。
+/// - `(` expression `)`
 ///
 /// () や (()) のような括弧内の式の場合、LiteralNode::NoneなるExpressionNodeを返します。
+/// - `() # Void型のnoneリテラルを返す`
+///
+/// ## Example
+/// - `()`
+/// - `(1 + 2)`
+/// - `(a)`
+/// - `(add(1, 2) as int -> float)`
 pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     // 左括弧がなければエラー、あれば次のトークンに進む
     parser.check_advance(TokenType::LeftParen)?;

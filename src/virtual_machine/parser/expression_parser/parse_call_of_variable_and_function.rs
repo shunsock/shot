@@ -4,15 +4,23 @@ use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
-/// ## 関数と変数の呼び出しをパースする関数
+/// 関数呼び出しと変数参照のパース
 ///
-/// ## Parameters
+/// # Return
+/// - `Result<ExpressionNode, ParserError>` パース結果
+///   - `ExpressionNode`: ExpressionのAST Node
+///   - `ParserError`: Parserのエラー
 ///
-/// * parser: shot言語のパーサー
+/// # Syntax
+/// 関数呼び出しは、expressionの一種で、以下のように定義される
+/// - 関数呼び出し: `name ( [arguments] )` where `arguments` is `name: expression [, name: expression]*`
 ///
-/// ## Return
-/// * ExpressionNode: ExpressionのAST Node
-/// * ParserError: Parserのエラー
+/// 変数参照は、expressionの一種で、以下のように定義される
+/// - 変数参照: `name`
+///
+/// # Example
+/// - 関数呼び出し: `f()`, `f(x: 0)`, `f(x: 0, y: "shunsock")`
+/// - 変数参照: `x`
 pub fn parse_identifier_or_call(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     let name: String = match parser.peek().token_type.clone() {
         TokenType::Identifier(name) => name,
