@@ -52,11 +52,12 @@ fn parse_let_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     Ok(statement)
 }
 
-/// ## 戻り値を返す文のパース
-///
-/// 戻り値を返す文は関数内で値を返す際に用いる文です
+/// 戻り値を返す文のパース
 ///
 /// ## Syntax
+/// 戻り値を返す文は関数内で値を返す際に用いる文です
+///
+/// ## Example
 /// - `return *Expression Node*;`
 fn parse_return_statement(parser: &mut Parser) -> Result<Statement, ParserError> {
     // returnキーワードを読み飛ばす
