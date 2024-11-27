@@ -1,14 +1,18 @@
 use crate::virtual_machine::ast::{ExpressionNode, Type, TypeCastNode};
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::core::type_token_to_type;
 use crate::virtual_machine::parser::parser_error::ParserError;
-use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
-/// ## Parse a type cast expression.
+/// 型キャスト表現をパースする
 ///
 /// ## Syntax
+/// 型キャスト表現は、表現の一種で、以下の構文を持ちます。
+/// - `expr as from_type -> to_type`
 ///
-/// 1 as int -> string;
+/// ## Example
+/// - Literalの型キャストをする `1 as int -> string;`
+/// - BinaryExpressionの結果を型キャストする `1 + 0 as int -> float;`
 pub fn parse_type_cast(
     parser: &mut Parser,
     expr: ExpressionNode,
