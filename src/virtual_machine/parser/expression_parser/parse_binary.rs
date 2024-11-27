@@ -1,26 +1,46 @@
 use crate::virtual_machine::ast::{BinaryOperationNode, BinaryOperator, ExpressionNode};
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::expression_parser::parse_primary::parse_primary;
 use crate::virtual_machine::parser::parser_error::ParserError;
-use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
+/// 二項演算の解析
+///
+/// # Returns
+/// - `Result<ExpressionNode, ParserError>` - パース結果
+///  - `ExpressionNode` - 式ノード
+///  - `ParserError` - パースエラー
+///
+/// # Syntax
+/// 二項演算は左辺と右辺の式ノードに対して演算子を適用する。
+///
+/// - `left operator right`
+///
+/// # Examples
+/// - `1 + 2`
+/// - `1 - 2`
+/// - `(1 + 2) * 3`
 pub fn parse_binary(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     parse_addition_subtraction(parser)
 }
 
-/// # 加算・減算の解析（優先順位低）
+/// 加算・減算の解析（優先順位低）
 ///
-/// ## Arguments
-/// * `parser` - パーサー
+/// # Returns
+/// - `Result<ExpressionNode, ParserError>` - パース結果
+///   - `ExpressionNode` - 式ノード
+///   - `ParserError` - パースエラー
 ///
-/// ## Returns
-/// `Result<ExpressionNode, ParserError>` - 式ノード
+/// # Syntax
+/// 加算は以下のように表現される。
+/// - `1 + 2`
 ///
-/// ## Notes
+/// # Notes
 /// BinaryOperationNode には左辺と右辺の式ノードが格納される。
 ///
-/// ## Details
-/// primary の処理はこの関数では行わない。parse_multiplication_division で行う。
+/// # Details
+/// primary の処理はこの関数では行わない。
+/// `parse_multiplication_division` を経由して `parse_primary` で行う。
 ///
 /// この関数のwhileループが開始する時点で以下の要件を満たしている
 /// - 左辺の式ノードが存在する
@@ -51,20 +71,24 @@ fn parse_addition_subtraction(parser: &mut Parser) -> Result<ExpressionNode, Par
     Ok(node)
 }
 
-/// # 乗算・除算の解析（優先順位高）
+/// 乗算・除算の解析（優先順位高）
 ///
-/// ## Arguments
-/// * `parser` - パーサー
+/// # Returns
+/// - `Result<ExpressionNode, ParserError>` - パース結果
+///   - `ExpressionNode` - 式ノード
+///   - `ParserError` - パースエラー
 ///
-/// ## Returns
-/// `Result<ExpressionNode, ParserError>` - 式ノード
+/// # Syntax
+/// 乗算は以下のように表現される。
+/// - `1 * 2`
 ///
-/// ## Notes
+/// # Notes
 /// BinaryOperationNode には左辺と右辺の式ノードが格納される。
 ///
-/// ## Details
+/// # Details
 /// 最上位の優先度をもつので、left には primary が入る。
-/// primary の処理はこの関数では行わない。parse_primary で行う。
+/// primary の処理はこの関数では行わない。`parse_primary` で行う。
+/// parenthesis の処理はこの関数では行わない。`parse_primary` で行う。
 fn parse_multiplication_division(parser: &mut Parser) -> Result<ExpressionNode, ParserError> {
     let mut node: ExpressionNode = parse_primary(parser)?;
 
