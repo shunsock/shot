@@ -1,7 +1,7 @@
 use crate::virtual_machine::ast::{ExpressionNode, Type, TypeCastNode};
-use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::core::type_token_to_type;
 use crate::virtual_machine::parser::parser_error::ParserError;
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 /// 型キャスト表現をパースする

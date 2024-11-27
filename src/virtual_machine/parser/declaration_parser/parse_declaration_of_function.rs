@@ -1,9 +1,9 @@
 use crate::virtual_machine::ast::FunctionDeclarationNode;
 use crate::virtual_machine::ast::{Statement, Type};
-use crate::virtual_machine::parser::Parser;
-use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
 use crate::virtual_machine::parser::parser_error::ParserError;
+use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
 use crate::virtual_machine::parser::statement_parser::parse_statement;
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 /// 関数宣言をパースする関数

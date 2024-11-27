@@ -1,7 +1,7 @@
 use crate::virtual_machine::ast::{ExpressionNode, LiteralNode, LiteralValue};
-use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::parser_error::ParserError;
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 /// 括弧式をパース

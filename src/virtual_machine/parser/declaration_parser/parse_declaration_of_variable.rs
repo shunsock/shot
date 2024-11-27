@@ -1,11 +1,10 @@
 use crate::virtual_machine::ast::VariableDeclarationNode;
 use crate::virtual_machine::ast::{ExpressionNode, Statement, Type};
-use crate::virtual_machine::parser::Parser;
-use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::parser::core::type_token_to_type;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
+use crate::virtual_machine::parser::Parser;
+use crate::virtual_machine::parser::ParserError;
 use crate::virtual_machine::token::token_type::TokenType;
-
 
 /// 変数宣言文をパースする
 ///

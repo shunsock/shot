@@ -1,7 +1,7 @@
 use crate::virtual_machine::ast::{BinaryOperationNode, BinaryOperator, ExpressionNode};
-use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::expression_parser::parse_primary::parse_primary;
 use crate::virtual_machine::parser::parser_error::ParserError;
+use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
 
 /// 二項演算の解析
