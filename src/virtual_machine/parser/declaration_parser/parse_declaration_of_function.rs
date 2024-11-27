@@ -1,15 +1,34 @@
 use crate::virtual_machine::ast::FunctionDeclarationNode;
 use crate::virtual_machine::ast::{Statement, Type};
-use crate::virtual_machine::parser::parser_error::ParserError;
-use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
-use crate::virtual_machine::parser::statement_parser::parse_statement;
 use crate::virtual_machine::parser::Parser;
+use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
+use crate::virtual_machine::parser::parser_error::ParserError;
+use crate::virtual_machine::parser::statement_parser::parse_statement;
 use crate::virtual_machine::token::token_type::TokenType;
 
-/// ## 関数宣言をパースする関数
+/// 関数宣言をパースする関数
 ///
-/// ## Example
+/// # Returns
+/// - `Result<Statement, ParserError>`: パース結果
+///   - Statement::DeclarationOfFunction: 関数宣言のAST Node
+///   - ParserError: エラーの種類
+///
+/// # Syntax
+/// 関数宣言の構文は以下の通り。
+///
+/// ```BNF
+/// FunctionDeclaration ::= Identifier ":" "fn" "=" "(" Parameters ")" ":" Type "{" Statements "}"
+/// Parameters ::= Parameter { "," Parameter }
+/// Parameter ::= Identifier ":" Type
+/// Type ::= "int" | "float" | "string" | "void" | "fn"
+/// ```
+///
+/// なお、Statementは `statement_parser.rs` を参照。
+///
+/// # Example
 /// let f: fn = (): type => { *Statements* };
+///
+/// # Note
 /// let tokenは上流の `declaration_parser.rs` の `parse_declaration` で消費されている
 /// semicolon tokenは上流の `statement_parser.rs` の `parse_statement` で消費される
 /// この関数では、 f: fn = (): type => { *Statements* } の部分をパースする
