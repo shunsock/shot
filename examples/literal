@@ -1,0 +1,8 @@
+# int type
+1;
+# float type
+3.14;
+# string type
+"shot";
+# void type: void type has only one value, none.
+none;
