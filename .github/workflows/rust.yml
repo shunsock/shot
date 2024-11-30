@@ -28,3 +28,6 @@ jobs:
         run: cargo clippy --verbose
       - name: Run tests
         run: cargo test --verbose
+      - name: Test Example Code Run Successfully
+        run: bash ./tests/example_code_checker.sh
+
