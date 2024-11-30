@@ -11,6 +11,11 @@ tasks:
       - cargo test
       - bash tests/example_code_checker.sh
 
+  example:
+    desc: "Run the example code"
+    cmds:
+      - bash tests/example_code_checker.sh
+
   install:
     desc: "Build in release mode and move the binary to /usr/local/bin"
     cmds:
