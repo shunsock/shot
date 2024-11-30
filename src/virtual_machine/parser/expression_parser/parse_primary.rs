@@ -82,7 +82,7 @@ pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::virtual_machine::ast::{ExpressionNode, LiteralValue};
+    use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, VariableCallNode};
     use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::Parser;
     use crate::virtual_machine::token::{token_type::TokenType, Token};
@@ -191,6 +191,32 @@ mod tests {
         let actual: Box<LiteralNode> = match result.unwrap() {
             ExpressionNode::Literal(literal) => literal,
             _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
+    }
+
+    /// 変数参照をパース可能か確認するテスト
+    /// a;
+    #[test]
+    fn test_parse_variable_call() {
+        // 生成されるAST Node
+        let expected = Box::new(VariableCallNode {
+            name: "a".to_string(),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // a;
+        let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::Identifier("a".to_string()))];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テスト対象の関数の実行(エラーが出ないこを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
+        assert!(result.is_ok());
+
+        // テスト対象の関数の実行結果が期待値と一致するこを確認
+        let actual: Box<VariableCallNode> = match result.unwrap() {
+            ExpressionNode::CallOfVariable(variable) => variable,
+            _ => panic!("Expected variable call node"),
         };
         assert_eq!(actual, expected);
     }
