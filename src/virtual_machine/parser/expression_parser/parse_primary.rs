@@ -88,88 +88,137 @@ mod tests {
     use crate::virtual_machine::token::{token_type::TokenType, Token};
 
     /// 整数リテラルをパース可能か確認するテスト
+    /// 42;
     #[test]
     fn test_parse_integer_literal() {
+        // 生成されるAST Node
+        let expected = Box::new(LiteralNode {
+            value: LiteralValue::Integer(42),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // 42;
         let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::IntegerLiteral(42))];
         let mut parser: Parser = create_parser_with_tokens(tokens);
-        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
         assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::Integer(42));
-        } else {
-            panic!("Expected integer literal");
-        }
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<LiteralNode> = match result.unwrap() {
+            ExpressionNode::Literal(literal) => literal,
+            _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
     }
 
     /// 浮動小数点リテラルをパース可能か確認するテスト
+    /// 3.14;
     #[test]
     fn test_parse_float_literal() {
+        // 生成されるAST Node
+        let expected = Box::new(LiteralNode {
+            value: LiteralValue::Float(3.14),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // 3.14;
         let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::FloatLiteral(3.14))];
         let mut parser: Parser = create_parser_with_tokens(tokens);
-        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
         assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::Float(3.14));
-        } else {
-            panic!("Expected float literal");
-        }
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<LiteralNode> = match result.unwrap() {
+            ExpressionNode::Literal(literal) => literal,
+            _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
     }
 
     /// 文字列リテラルをパース可能か確認するテスト
+    /// "Hello";
     #[test]
     fn test_parse_string_literal() {
+        // 生成されるAST Node
+        let expected = Box::new(LiteralNode {
+            value: LiteralValue::String("Hello".to_string()),
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // "Hello";
         let tokens: Vec<Token> = vec![Token::new(
             1,
             1,
             TokenType::StringLiteral("Hello".to_string()),
         )];
         let mut parser: Parser = create_parser_with_tokens(tokens);
-        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
         assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::String("Hello".to_string()));
-        } else {
-            panic!("Expected string literal");
-        }
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<LiteralNode> = match result.unwrap() {
+            ExpressionNode::Literal(literal) => literal,
+            _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
     }
 
     /// Noneリテラルをパース可能か確認するテスト
+    /// none;
     #[test]
     fn test_parse_none_literal() {
+        // 生成されるAST Node
+        let expected = Box::new(LiteralNode {
+            value: LiteralValue::None,
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // none;
         let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::NoneLiteral)];
         let mut parser: Parser = create_parser_with_tokens(tokens);
-        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
         assert!(result.is_ok());
-        if let ExpressionNode::Literal(literal) = result.unwrap() {
-            assert_eq!(literal.value, LiteralValue::None);
-        } else {
-            panic!("Expected None literal");
-        }
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<LiteralNode> = match result.unwrap() {
+            ExpressionNode::Literal(literal) => literal,
+            _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
     }
 
     /// 予期しないトークンが出現した際にエラーを返すか確認するテスト
+    /// +;
     #[test]
     fn test_unexpected_token_type() {
+        // 想定されるエラー
+        let expected = ParserError::UnexpectedTokenType {
+            token: TokenType::Plus,
+            line: 1,
+            char_pos: 1,
+        };
+
+        // テストする関数の入力である、Token列, Parserの生成
         let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::Plus)]; // 予期しないトークン
         let mut parser: Parser = create_parser_with_tokens(tokens);
-        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
+        // テスト対象の関数の実行(エラーが出ることを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
         assert!(result.is_err());
-        if let Err(ParserError::UnexpectedTokenType {
-            token,
-            line,
-            char_pos,
-        }) = result
-        {
-            assert_eq!(token, TokenType::Plus);
-            assert_eq!(line, 1);
-            assert_eq!(char_pos, 1);
-        } else {
-            panic!("Expected UnexpectedTokenType error");
-        }
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: ParserError = match result {
+            Err(err) => err,
+            _ => panic!("Expected error, but got Ok"),
+        };
+        assert_eq!(actual, expected);
     }
 }
