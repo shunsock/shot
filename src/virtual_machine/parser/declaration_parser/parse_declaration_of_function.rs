@@ -201,16 +201,11 @@ fn get_type(parser: &mut Parser) -> Result<Type, ParserError> {
 #[cfg(test)]
 mod tests {
     use crate::virtual_machine::ast::{FunctionDeclarationNode, Statement, Type};
+    use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::declaration_parser::parse_declaration_of_function::parse_declaration_of_function;
     use crate::virtual_machine::parser::parser_error::ParserError;
     use crate::virtual_machine::parser::{Parser, TokenType};
     use crate::virtual_machine::token::Token;
-
-    fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
-        let mut tokens_with_eof = tokens.clone();
-        tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
-        Parser::new(tokens_with_eof)
-    }
 
     /// 引数のない関数宣言のテスト
     /// f: fn = (): void { return none; };
