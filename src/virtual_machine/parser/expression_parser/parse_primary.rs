@@ -82,7 +82,9 @@ pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, VariableCallNode};
+    use crate::virtual_machine::ast::{
+        ExpressionNode, FunctionCallNode, LiteralValue, VariableCallNode,
+    };
     use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::Parser;
     use crate::virtual_machine::token::{token_type::TokenType, Token};
@@ -217,6 +219,57 @@ mod tests {
         let actual: Box<VariableCallNode> = match result.unwrap() {
             ExpressionNode::CallOfVariable(variable) => variable,
             _ => panic!("Expected variable call node"),
+        };
+        assert_eq!(actual, expected);
+    }
+
+    /// 関数呼び出しをパース可能か確認するテスト
+    /// add(left: 1, right: 2);
+    #[test]
+    fn test_parse_function_call() {
+        // 生成されるAST Node
+        let expected = Box::new(FunctionCallNode {
+            name: "add".to_string(),
+            arguments: vec![
+                (
+                    "left".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::Integer(1),
+                    })),
+                ),
+                (
+                    "right".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::Integer(2),
+                    })),
+                ),
+            ],
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // add(left: 1, right: 2);
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::Identifier("add".to_string())),
+            Token::new(1, 4, TokenType::LeftParen),
+            Token::new(1, 1, TokenType::Identifier("left".to_string())),
+            Token::new(1, 6, TokenType::Colon),
+            Token::new(1, 5, TokenType::IntegerLiteral(1)),
+            Token::new(1, 5, TokenType::Comma),
+            Token::new(1, 1, TokenType::Identifier("right".to_string())),
+            Token::new(1, 6, TokenType::Colon),
+            Token::new(1, 8, TokenType::IntegerLiteral(2)),
+            Token::new(1, 9, TokenType::RightParen),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
+        assert!(result.is_ok());
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<FunctionCallNode> = match result.unwrap() {
+            ExpressionNode::CallOfFunction(function) => function,
+            _ => panic!("Expected function call node"),
         };
         assert_eq!(actual, expected);
     }
