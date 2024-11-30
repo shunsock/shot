@@ -83,19 +83,16 @@ pub fn parse_primary(parser: &mut Parser) -> Result<ExpressionNode, ParserError>
 mod tests {
     use super::*;
     use crate::virtual_machine::ast::{ExpressionNode, LiteralValue};
+    use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::Parser;
     use crate::virtual_machine::token::{token_type::TokenType, Token};
-
-    fn create_parser_with_token(token: Token) -> Parser {
-        Parser::new(vec![token, Token::new(1, 1, TokenType::Eof)])
-    }
 
     /// 整数リテラルをパース可能か確認するテスト
     #[test]
     fn test_parse_integer_literal() {
-        let token = Token::new(1, 1, TokenType::IntegerLiteral(42));
-        let mut parser = create_parser_with_token(token);
-        let result = parse_primary(&mut parser);
+        let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::IntegerLiteral(42))];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
         assert!(result.is_ok());
         if let ExpressionNode::Literal(literal) = result.unwrap() {
@@ -108,9 +105,9 @@ mod tests {
     /// 浮動小数点リテラルをパース可能か確認するテスト
     #[test]
     fn test_parse_float_literal() {
-        let token = Token::new(1, 1, TokenType::FloatLiteral(3.14));
-        let mut parser = create_parser_with_token(token);
-        let result = parse_primary(&mut parser);
+        let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::FloatLiteral(3.14))];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
         assert!(result.is_ok());
         if let ExpressionNode::Literal(literal) = result.unwrap() {
@@ -123,9 +120,13 @@ mod tests {
     /// 文字列リテラルをパース可能か確認するテスト
     #[test]
     fn test_parse_string_literal() {
-        let token = Token::new(1, 1, TokenType::StringLiteral("Hello".to_string()));
-        let mut parser = create_parser_with_token(token);
-        let result = parse_primary(&mut parser);
+        let tokens: Vec<Token> = vec![Token::new(
+            1,
+            1,
+            TokenType::StringLiteral("Hello".to_string()),
+        )];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
         assert!(result.is_ok());
         if let ExpressionNode::Literal(literal) = result.unwrap() {
@@ -138,9 +139,9 @@ mod tests {
     /// Noneリテラルをパース可能か確認するテスト
     #[test]
     fn test_parse_none_literal() {
-        let token = Token::new(1, 1, TokenType::NoneLiteral);
-        let mut parser = create_parser_with_token(token);
-        let result = parse_primary(&mut parser);
+        let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::NoneLiteral)];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
         assert!(result.is_ok());
         if let ExpressionNode::Literal(literal) = result.unwrap() {
@@ -153,9 +154,9 @@ mod tests {
     /// 予期しないトークンが出現した際にエラーを返すか確認するテスト
     #[test]
     fn test_unexpected_token_type() {
-        let token = Token::new(1, 1, TokenType::Plus); // 予期しないトークン
-        let mut parser = create_parser_with_token(token);
-        let result = parse_primary(&mut parser);
+        let tokens: Vec<Token> = vec![Token::new(1, 1, TokenType::Plus)]; // 予期しないトークン
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
 
         assert!(result.is_err());
         if let Err(ParserError::UnexpectedTokenType {

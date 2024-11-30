@@ -1,6 +1,11 @@
 use crate::virtual_machine::ast::Type;
-use crate::virtual_machine::parser::ParserError;
+// cfg(test)を使っているので、テスト時のみ使用される
+#[allow(unused_imports)]
+use crate::virtual_machine::parser::{Parser, ParserError};
+#[allow(unused_imports)]
 use crate::virtual_machine::token::token_type::TokenType;
+#[allow(unused_imports)]
+use crate::virtual_machine::token::Token;
 
 /// 入力されたトークンをShot言語の型のトークンに対応する型に変換する
 ///
@@ -23,4 +28,18 @@ pub fn type_token_to_type(token_type: TokenType) -> Result<Type, ParserError> {
             char_pos: 0,
         }),
     }
+}
+
+/// Parserを指定のトークン列で初期化するテスト用の関数
+///
+/// # Arguments
+/// - `tokens`: 初期化するトークン列
+///
+/// # Returns
+/// - `Parser`: 生成されたParser。Token列の後ろにEOFが追加されている。
+#[cfg(test)]
+pub fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
+    let mut tokens_with_eof: Vec<Token> = tokens;
+    tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
+    Parser::new(tokens_with_eof)
 }

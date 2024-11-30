@@ -54,14 +54,9 @@ pub fn parse_parenthesized(parser: &mut Parser) -> Result<ExpressionNode, Parser
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::Parser;
     use crate::virtual_machine::token::{token_type::TokenType, Token};
-
-    fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
-        let mut tokens_with_eof = tokens.clone();
-        tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
-        Parser::new(tokens_with_eof)
-    }
 
     /// 空の括弧内の式をパースするテスト
     /// test case: `()`

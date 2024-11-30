@@ -43,16 +43,11 @@ pub fn parse_type_cast(
 mod tests {
     use crate::virtual_machine::ast::ExpressionNode;
     use crate::virtual_machine::ast::{LiteralNode, LiteralValue, Type, TypeCastNode};
+    use crate::virtual_machine::parser::core::create_parser_with_tokens;
     use crate::virtual_machine::parser::expression_parser::parse_type_cast::parse_type_cast;
     use crate::virtual_machine::parser::parser_error::ParserError;
     use crate::virtual_machine::parser::{Parser, TokenType};
     use crate::virtual_machine::token::Token;
-
-    fn create_parser_with_tokens(tokens: Vec<Token>) -> Parser {
-        let mut tokens_with_eof = tokens.clone();
-        tokens_with_eof.push(Token::new(1, 1, TokenType::Eof)); // EOFを追加
-        Parser::new(tokens_with_eof)
-    }
 
     // 正常系
 
