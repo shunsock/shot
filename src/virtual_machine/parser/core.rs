@@ -7,25 +7,29 @@ use crate::virtual_machine::token::token_type::TokenType;
 #[allow(unused_imports)]
 use crate::virtual_machine::token::Token;
 
-/// 入力されたトークンをShot言語の型のトークンに対応する型に変換する
+/// パーサーの現在のトークンから型情報を取得する
 ///
 /// # Arguments
-/// - `token_type`: 変換するトークン
+/// - `parser`: Parser
 ///
 /// # Returns
 /// - `Type`: 変換された型
 /// - `ParserError::TypeNotFound`: 型が見つからなかった場合
-pub fn type_token_to_type(token_type: TokenType) -> Result<Type, ParserError> {
-    match token_type {
+///
+/// # Raises
+/// - `ParserError::TypeNotFound`: 型が見つからなかった場合
+pub fn get_type_from_current_token(parser: &mut Parser) -> Result<Type, ParserError> {
+    let current_token: Token = parser.peek().clone();
+    match current_token.token_type.clone() {
         TokenType::IntType => Ok(Type::Integer),
         TokenType::FloatType => Ok(Type::Float),
         TokenType::StringType => Ok(Type::String),
         TokenType::VoidType => Ok(Type::Void),
         TokenType::Fn => Ok(Type::Function),
         _ => Err(ParserError::TypeNotFound {
-            found: token_type,
-            line: 0,
-            char_pos: 0,
+            found: current_token.token_type.clone(),
+            line: current_token.line,
+            char_pos: current_token.char_pos,
         }),
     }
 }

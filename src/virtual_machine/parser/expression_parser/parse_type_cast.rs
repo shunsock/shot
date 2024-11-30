@@ -1,5 +1,5 @@
 use crate::virtual_machine::ast::{ExpressionNode, Type, TypeCastNode};
-use crate::virtual_machine::parser::core::type_token_to_type;
+use crate::virtual_machine::parser::core::get_type_from_current_token;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::token_type::TokenType;
@@ -21,14 +21,14 @@ pub fn parse_type_cast(
     parser.check_advance(TokenType::As)?;
 
     // 型を読み取る
-    let from_type: Type = type_token_to_type(parser.peek().token_type.clone())?;
+    let from_type: Type = get_type_from_current_token(parser)?;
     parser.advance();
 
     // -> を確認して読み飛ばす
     parser.check_advance(TokenType::TypeCastArrow)?;
 
     // 型を読み取る
-    let to_type: Type = type_token_to_type(parser.peek().token_type.clone())?;
+    let to_type: Type = get_type_from_current_token(parser)?;
     parser.advance();
 
     // 式を返す
