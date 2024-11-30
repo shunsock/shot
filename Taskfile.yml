@@ -25,5 +25,5 @@ tasks:
     desc: "Run the CLI tests"
     cmds:
       - cargo build --release
-      - ./target/release/shot -f example/declare_variable.blt -d > logs/declare_variable.log
-      - ./target/release/shot -f example/declare_function.blt -d > logs/declare_function.log
+      - ./target/release/shot -f examples/declare_variable.blt -d > logs/declare_variable.log
+      - ./target/release/shot -f examples/declare_function.blt -d > logs/declare_function.log
