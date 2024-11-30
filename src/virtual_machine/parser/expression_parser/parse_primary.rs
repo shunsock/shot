@@ -274,6 +274,36 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
+    /// 括弧内の式をパース可能か確認するテスト
+    /// ();
+    /// Syntax: (); return none (void type);
+    #[test]
+    fn test_parse_parenthesized() {
+        // 生成されるAST Node
+        let expected = Box::new(LiteralNode {
+            value: LiteralValue::None,
+        });
+
+        // テストする関数の入力である、Token列, Parserの生成
+        // ();
+        let tokens: Vec<Token> = vec![
+            Token::new(1, 1, TokenType::LeftParen),
+            Token::new(1, 1, TokenType::RightParen),
+        ];
+        let mut parser: Parser = create_parser_with_tokens(tokens);
+
+        // テスト対象の関数の実行(エラーが出ないことを確認)
+        let result: Result<ExpressionNode, ParserError> = parse_primary(&mut parser);
+        assert!(result.is_ok());
+
+        // テスト対象の関数の実行結果が期待値と一致することを確認
+        let actual: Box<LiteralNode> = match result.unwrap() {
+            ExpressionNode::Literal(literal) => literal,
+            _ => panic!("Expected literal node"),
+        };
+        assert_eq!(actual, expected);
+    }
+
     /// 予期しないトークンが出現した際にエラーを返すか確認するテスト
     /// +;
     #[test]
