@@ -1,5 +1,6 @@
 use crate::virtual_machine::ast::FunctionDeclarationNode;
 use crate::virtual_machine::ast::{Statement, Type};
+use crate::virtual_machine::parser::core::get_type_from_current_token;
 use crate::virtual_machine::parser::parser_error::ParserError;
 use crate::virtual_machine::parser::parser_error::ParserError::{MismatchedToken, UnexpectedEof};
 use crate::virtual_machine::parser::statement_parser::parse_statement;
@@ -76,7 +77,7 @@ pub(crate) fn parse_declaration_of_function(parser: &mut Parser) -> Result<State
 
     // 戻り値の型を確認する
     // let f: fn = (x: int, y: float): string
-    let return_type: Type = get_type(parser)?;
+    let return_type: Type = get_type_from_current_token(parser)?;
     parser.advance();
 
     // 左波括弧があることを確認して読み飛ばす
@@ -127,7 +128,7 @@ fn parse_parameters(parser: &mut Parser) -> Result<Vec<(String, Type)>, ParserEr
         parser.check_advance(TokenType::Colon)?;
 
         // 型情報を取得
-        let parameter_type: Type = get_type(parser)?;
+        let parameter_type: Type = get_type_from_current_token(parser)?;
         parser.advance();
 
         // 引数と型の組みをpush
@@ -179,23 +180,6 @@ fn parse_function_body(parser: &mut Parser) -> Result<Vec<Statement>, ParserErro
         }
     }
     Ok(statements)
-}
-
-fn get_type(parser: &mut Parser) -> Result<Type, ParserError> {
-    let token: TokenType = parser.peek().token_type.clone();
-    match token {
-        TokenType::IntType => Ok(Type::Integer),
-        TokenType::FloatType => Ok(Type::Float),
-        TokenType::StringType => Ok(Type::String),
-        TokenType::VoidType => Ok(Type::Void),
-        TokenType::Fn => Ok(Type::Function),
-        token => Err(MismatchedToken {
-            expected: TokenType::Identifier(String::from("parameter_name")),
-            found: token.clone(),
-            line: parser.peek().line,
-            char_pos: parser.peek().char_pos,
-        }),
-    }
 }
 
 #[cfg(test)]

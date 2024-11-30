@@ -1,6 +1,6 @@
 use crate::virtual_machine::ast::VariableDeclarationNode;
 use crate::virtual_machine::ast::{ExpressionNode, Statement, Type};
-use crate::virtual_machine::parser::core::type_token_to_type;
+use crate::virtual_machine::parser::core::get_type_from_current_token;
 use crate::virtual_machine::parser::expression_parser::parse_expression;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::parser::ParserError;
@@ -44,8 +44,7 @@ pub fn parse_declaration_of_variable(parser: &mut Parser) -> Result<Statement, P
     parser.check_advance(TokenType::Colon)?;
 
     // 型を読み取る
-    let type_token: TokenType = parser.peek().token_type.clone();
-    let variable_type: Type = type_token_to_type(type_token)?;
+    let variable_type: Type = get_type_from_current_token(parser)?;
     parser.advance();
 
     // イコールを読み飛ばす
