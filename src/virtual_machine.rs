@@ -64,7 +64,6 @@ impl VirtualMachine {
         for token in tokens {
             println!("  {:?}", token.token_type);
         }
-        println!("\n");
     }
 
     fn print_statements(ast: AST) {
@@ -73,6 +72,5 @@ impl VirtualMachine {
             println!("  Statement[{}]:", index_of_ast);
             println!("    {:?}", statement.1);
         }
-        println!("\n");
     }
 }
