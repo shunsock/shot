@@ -9,6 +9,7 @@ tasks:
       - cargo clippy
       - cargo build
       - cargo test
+      - bash tests/example_code_checker.sh
 
   install:
     desc: "Build in release mode and move the binary to /usr/local/bin"
@@ -20,10 +21,3 @@ tasks:
     desc: "Remove shot from /usr/local/bin"
     cmds:
       - sudo rm /usr/local/bin/shot
-
-  test_cli:
-    desc: "Run the CLI tests"
-    cmds:
-      - cargo build --release
-      - ./target/release/shot -f example/declare_variable.blt -d > logs/declare_variable.log
-      - ./target/release/shot -f example/declare_function.blt -d > logs/declare_function.log
