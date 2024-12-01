@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use crate::virtual_machine::ast::VariableDeclarationNode;
+use std::collections::HashMap;
 
 pub(crate) struct VariableMapper {
-    function_map: HashMap<String, VariableDeclarationNode>
+    function_map: HashMap<String, VariableDeclarationNode>,
 }
 
 impl VariableMapper {

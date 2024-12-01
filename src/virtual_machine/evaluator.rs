@@ -1,8 +1,7 @@
-mod function_mapper;
-mod variable_mapper;
+mod mapper;
 
-use function_mapper::FunctionMapper;
-use variable_mapper::VariableMapper;
+use mapper::function_mapper::FunctionMapper;
+use mapper::variable_mapper::VariableMapper;
 
 pub struct Evaluator {
     function_mapper: FunctionMapper,

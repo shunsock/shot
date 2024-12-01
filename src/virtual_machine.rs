@@ -1,8 +1,8 @@
 pub mod ast;
+mod evaluator;
 pub mod parser;
 mod scanner;
 pub mod token;
-mod evaluator;
 
 use crate::virtual_machine::ast::AST;
 use crate::virtual_machine::parser::Parser;

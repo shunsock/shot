@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use crate::virtual_machine::ast::FunctionDeclarationNode;
+use std::collections::HashMap;
 
 pub(crate) struct FunctionMapper {
-    function_map: HashMap<String, FunctionDeclarationNode>
+    function_map: HashMap<String, FunctionDeclarationNode>,
 }
 
 impl FunctionMapper {
