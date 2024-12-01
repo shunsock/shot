@@ -1,0 +1,16 @@
+1 + 1;
+1 - 1;
+1 * 1;
+1 / 1;
+
+# we use expression for left and right side
+1 + 1 + 1;
+1 - 1 - 1;
+1 * 1 * 1;
+1 / 1 / 1;
+
+# also, we can use parentheses
+(1 + 1) + 1;
+1 - (1 - 1);
+(1 * 1) * 1;
+1 / (1 / 1);
