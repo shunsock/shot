@@ -5,6 +5,9 @@ mod scanner;
 pub mod token;
 
 use crate::virtual_machine::ast::AST;
+use crate::virtual_machine::evaluator::mapper::function_mapper::FunctionMapper;
+use crate::virtual_machine::evaluator::mapper::variable_mapper::VariableMapper;
+use crate::virtual_machine::evaluator::Evaluator;
 use crate::virtual_machine::parser::Parser;
 use crate::virtual_machine::token::Token;
 use scanner::Scanner;
@@ -46,6 +49,7 @@ impl VirtualMachine {
             VirtualMachine::print_tokens(tokens.clone());
         }
 
+        // 構文解析
         let mut parser: Parser = Parser::new(tokens);
         let ast: AST = match parser.parse() {
             Ok(ast) => ast,
@@ -57,6 +61,20 @@ impl VirtualMachine {
 
         if self.debug {
             Self::print_statements(ast.clone());
+        }
+
+        // 評価
+        let mut evaluator: Evaluator =
+            Evaluator::new(ast, FunctionMapper::new(), VariableMapper::new());
+
+        match evaluator.evaluate() {
+            Ok(result) => {
+                println!("{:?}", result);
+            }
+            Err(error) => {
+                eprintln!("{:?}", error.to_string());
+                exit(1);
+            }
         }
     }
 

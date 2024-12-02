@@ -68,7 +68,7 @@ impl FunctionMapper {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::virtual_machine::ast::{FunctionDeclarationNode, Statement, Type};
+    use crate::virtual_machine::ast::{FunctionDeclarationNode, Type};
 
     /// 関数マッパーの新規作成テスト
     /// 関数マッパーを新規作成し、正常に初期化されていることを確認します。
