@@ -21,11 +21,16 @@ impl Evaluator {
         }
     }
 
-    pub fn evaluate(&mut self) -> Result<(), EvaluationError> {
+    pub fn evaluate(&mut self) -> Result<LiteralValue, EvaluationError> {
         // ここで評価処理を行う
         for node in self.ast.statements.clone() {
             println!("{:?}", node);
+            // Return文なら評価して OK(LiteralValue) を返す
+            // それ以外の場合は次のステートメントを評価する (OKを返さずに次の評価を続ける)
         }
-        Ok(())
+        // 最後までReturn文がなかった場合は None を返す
+        // 自作関数の場合、Parserの時点でReturn文があることを保証しているので、ここでNoneを返すことはない
+        // つまり、ここでNoneを返すのは、GlobalScopeの場合のみ
+        Ok(LiteralValue::None)
     }
 }
