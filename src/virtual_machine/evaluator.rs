@@ -1,7 +1,7 @@
 mod evaluation_error;
 pub(crate) mod mapper;
 
-use crate::virtual_machine::ast::{LiteralNode, LiteralValue, AST};
+use crate::virtual_machine::ast::{LiteralValue, AST};
 use crate::virtual_machine::evaluator::evaluation_error::EvaluationError;
 use mapper::function_mapper::FunctionMapper;
 use mapper::variable_mapper::VariableMapper;
