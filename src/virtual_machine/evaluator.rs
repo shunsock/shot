@@ -21,10 +21,11 @@ impl Evaluator {
         }
     }
 
-    pub fn evaluate(&mut self) -> Result<LiteralNode, EvaluationError> {
+    pub fn evaluate(&mut self) -> Result<(), EvaluationError> {
         // ここで評価処理を行う
-        Ok(LiteralNode {
-            value: LiteralValue::Integer(0),
-        })
+        for node in self.ast.statements.clone() {
+            println!("{:?}", node);
+        }
+        Ok(())
     }
 }
