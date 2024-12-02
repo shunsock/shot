@@ -1,3 +1,4 @@
+mod evaluation_error;
 mod mapper;
 
 use mapper::function_mapper::FunctionMapper;
