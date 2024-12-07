@@ -8,4 +8,6 @@ pub enum EvaluationError {
     VariableNotFound { name: String, line: usize },
     #[error("Variable {name} is already defined. You cannot reassign a variable at line {line}")]
     ReassignmentError { name: String, line: usize },
+    #[error("Can not reach this code. This is a bug. Please report it.")]
+    UnreachableCode,
 }

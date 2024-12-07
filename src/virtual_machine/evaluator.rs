@@ -33,7 +33,7 @@ impl Evaluator {
             if let Statement::Return(expr) = stmt.1 {
                 return evaluate_expression(self, expr);
             }
-            evaluate_statement(self)?;
+            evaluate_statement(self, stmt)?;
         }
         // 最後までReturn文がなかった場合は None を返す
         // 自作関数の場合、Parserの時点でReturn文があることを保証しているので、ここでNoneを返すことはない
