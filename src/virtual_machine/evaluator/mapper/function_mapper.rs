@@ -49,10 +49,10 @@ impl FunctionMapper {
     /// - `EvaluationError::ReassignmentError` - 関数の再定義が行われた場合
     pub fn set(
         &mut self,
-        name: String,
         line: usize,
         definition: FunctionDeclarationNode,
     ) -> Result<(), EvaluationError> {
+        let name: String = definition.name.clone();
         if self.map.contains_key(&name) {
             return Err(EvaluationError::ReassignmentError {
                 name: name.clone(),
@@ -91,8 +91,7 @@ mod tests {
         };
 
         // 関数を設定
-        let result: Result<(), EvaluationError> =
-            mapper.set(function_node.name.clone(), 1, function_node.clone());
+        let result: Result<(), EvaluationError> = mapper.set(1, function_node.clone());
 
         // 正常に設定されたことを確認
         assert!(result.is_ok());
@@ -147,15 +146,13 @@ mod tests {
         };
 
         // 最初の関数を設定
-        let first_result: Result<(), EvaluationError> =
-            mapper.set(first_function_node.name.clone(), 3, first_function_node);
+        let first_result: Result<(), EvaluationError> = mapper.set(3, first_function_node);
 
         // 正常に設定されたことを確認
         assert!(first_result.is_ok());
 
         // 同じ名前で関数を再設定
-        let second_result: Result<(), EvaluationError> =
-            mapper.set(second_function_node.name.clone(), 5, second_function_node);
+        let second_result: Result<(), EvaluationError> = mapper.set(5, second_function_node);
 
         // エラーが返されることを確認
         assert!(second_result.is_err());

@@ -50,8 +50,8 @@ impl VariableMapper {
     /// - `EvaluationError::ReassignmentError` - 変数の再代入が行われた場合
     pub fn set(
         &mut self,
-        definition: VariableDeclarationNode,
         line: usize,
+        definition: VariableDeclarationNode,
     ) -> Result<(), EvaluationError> {
         // 再代入を許可しない
         // let x = 1; x = 2;  # Error
@@ -93,7 +93,7 @@ mod tests {
         };
 
         // 変数を設定
-        let result: Result<(), EvaluationError> = mapper.set(variable_node.clone(), 1);
+        let result: Result<(), EvaluationError> = mapper.set(1, variable_node.clone());
 
         // 正常に設定されたことを確認
         assert!(result.is_ok());
@@ -149,14 +149,14 @@ mod tests {
         };
 
         // 最初の変数を設定
-        let first_result: Result<(), EvaluationError> = mapper.set(first_variable_node.clone(), 3);
+        let first_result: Result<(), EvaluationError> = mapper.set(3, first_variable_node.clone());
 
         // 正常に設定されたことを確認
         assert!(first_result.is_ok());
 
         // 同じ名前で変数を再設定
         let second_result: Result<(), EvaluationError> =
-            mapper.set(second_variable_node.clone(), 5);
+            mapper.set(5, second_variable_node.clone());
 
         // エラーが返されることを確認
         assert!(second_result.is_err());
