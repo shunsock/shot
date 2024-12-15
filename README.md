@@ -16,12 +16,15 @@ This repository is `Work In Progress`. Note that breaking change may occur.
 
 ### Evaluator
 
-- Declaration of Variable
-- Declaration of Function
-- Primary
-- Binary
-- Parenthesis
-- Call of Variable and Function
+- ✅ Declaration of Variable
+- ✅ Declaration of Function
+- 🚧 Return Statement
+- 🚧 Expression Statement
+- 🚧 Binary
+    - 🚧 Primary
+        - ✅ Literal
+        - Call of Variable and Function
+    - Parenthesis
 - Type Cast Operation
 
 ## Usage
