@@ -30,13 +30,12 @@ impl Evaluator {
     pub fn evaluate(&mut self) -> Result<LiteralValue, EvaluationError> {
         // ここで評価処理を行う
         for stmt in self.ast.statements.clone() {
-            println!("{:?}", stmt);
             self.line = stmt.0;
 
             // Return文なら評価して OK(LiteralValue) を返す
             // それ以外の場合は次のステートメントを評価する (OKを返さずに次の評価を続ける)
             if let Statement::Return(expr) = stmt.1.clone() {
-                evaluate_expression(self, expr)?;
+                return Ok(evaluate_expression(self, expr)?);
             }
             evaluate_statement(self, stmt.1)?;
         }
