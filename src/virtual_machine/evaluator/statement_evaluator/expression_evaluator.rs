@@ -1,17 +1,22 @@
+mod type_cast_evaluator;
+
 use crate::virtual_machine::ast::{ExpressionNode, LiteralValue};
+use crate::virtual_machine::evaluator::evaluation_error::EvaluationError;
 use crate::virtual_machine::evaluator::Evaluator;
+use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator::type_cast_evaluator::evaluate_type_cast;
 
 pub fn evaluate_expression(
     evaluator: &mut Evaluator,
     expression: Box<ExpressionNode>,
-) -> LiteralValue {
+) -> Result<LiteralValue, EvaluationError> {
     match *expression {
-        ExpressionNode::Literal(literal) => literal.value,
+        ExpressionNode::Literal(literal) => Ok(literal.value),
         // BinaryOperation
         // CallOfFunction
         // CallOfVariable
         // TypeCast
-        _ => LiteralValue::None,
+        ExpressionNode::TypeCast(node) => evaluate_type_cast(evaluator, node),
+        _ => Ok(LiteralValue::None),
     }
 }
 
@@ -20,6 +25,7 @@ mod tests {
     use crate::virtual_machine::ast::LiteralNode;
     use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, Statement};
     use crate::virtual_machine::evaluator::core::initialize_evaluator_with_custom_ast;
+    use crate::virtual_machine::evaluator::evaluation_error::EvaluationError;
     use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator::evaluate_expression;
     use crate::virtual_machine::evaluator::Evaluator;
 
@@ -32,7 +38,9 @@ mod tests {
             })));
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(*expression.clone())]);
-        let actual: LiteralValue = evaluate_expression(&mut evaluator, expression);
-        assert_eq!(actual, expected);
+        let actual: Result<LiteralValue, EvaluationError> =
+            evaluate_expression(&mut evaluator, expression);
+        assert_eq!(actual, Ok(expected.clone()));
+        assert_eq!(actual.unwrap(), expected);
     }
 }

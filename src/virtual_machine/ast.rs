@@ -306,3 +306,14 @@ pub enum LiteralValue {
     String(String), // 文字列リテラル
     None,           // Noneリテラル
 }
+
+impl LiteralValue {
+    pub fn to_string(&self) -> String {
+        match self {
+            LiteralValue::Integer(value) => value.to_string(),
+            LiteralValue::Float(value) => value.to_string(),
+            LiteralValue::String(value) => value.clone(),
+            LiteralValue::None => "none".to_string(),
+        }
+    }
+}
