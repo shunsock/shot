@@ -1,3 +1,4 @@
+mod call_of_variable_evaluator;
 mod type_cast_evaluator;
 
 use crate::virtual_machine::ast::{ExpressionNode, LiteralValue};
@@ -14,6 +15,9 @@ pub fn evaluate_expression(
         // BinaryOperation
         // CallOfFunction
         // CallOfVariable
+        ExpressionNode::CallOfVariable(node) => {
+            call_of_variable_evaluator::call_of_variable(evaluator, *node)
+        }
         // TypeCast
         ExpressionNode::TypeCast(node) => evaluate_type_cast(evaluator, node),
         _ => Ok(LiteralValue::None),
