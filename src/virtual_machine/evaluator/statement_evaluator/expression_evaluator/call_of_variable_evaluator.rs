@@ -16,6 +16,6 @@ pub(crate) fn call_of_variable(
     node: VariableCallNode,
 ) -> Result<LiteralValue, EvaluationError> {
     let var: VariableDeclarationNode = evaluator.variable_mapper.get(&node.name, evaluator.line)?;
-    let literal_value: LiteralValue = evaluate_expression(evaluator, var.value)?;
+    let literal_value: LiteralValue = evaluate_expression(evaluator, *var.value)?;
     Ok(literal_value)
 }

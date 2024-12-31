@@ -1,7 +1,12 @@
+#[allow(unused_imports)]
 use crate::virtual_machine::ast::AST;
+#[allow(unused_imports)]
 use crate::virtual_machine::ast::{Statement, Type};
+#[allow(unused_imports)]
 use crate::virtual_machine::evaluator::mapper::function_mapper::FunctionMapper;
+#[allow(unused_imports)]
 use crate::virtual_machine::evaluator::mapper::variable_mapper::VariableMapper;
+#[allow(unused_imports)]
 use crate::virtual_machine::evaluator::Evaluator;
 
 #[cfg(test)]

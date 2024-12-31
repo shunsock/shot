@@ -35,7 +35,7 @@ impl Evaluator {
             // Return文なら評価して OK(LiteralValue) を返す
             // それ以外の場合は次のステートメントを評価する (OKを返さずに次の評価を続ける)
             if let Statement::Return(expr) = stmt.1.clone() {
-                return Ok(evaluate_expression(self, expr)?);
+                return evaluate_expression(self, *expr);
             }
             evaluate_statement(self, stmt.1)?;
         }

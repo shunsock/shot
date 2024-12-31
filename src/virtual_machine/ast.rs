@@ -1,3 +1,5 @@
+use std::fmt;
+
 // ---------------------------------------------------------------------
 // Abstract Syntax Tree
 // ---------------------------------------------------------------------
@@ -298,6 +300,19 @@ pub enum Type {
     Function, // 関数型
 }
 
+impl fmt::Display for Type {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let type_str = match self {
+            Type::Integer => "int",
+            Type::Float => "float",
+            Type::String => "string",
+            Type::Void => "void",
+            Type::Function => "fn",
+        };
+        write!(f, "{}", type_str)
+    }
+}
+
 // リテラルの値の種類
 #[derive(Debug, Clone, PartialEq)]
 pub enum LiteralValue {
@@ -307,13 +322,14 @@ pub enum LiteralValue {
     None,           // Noneリテラル
 }
 
-impl LiteralValue {
-    pub fn to_string(&self) -> String {
-        match self {
+impl fmt::Display for LiteralValue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let value: String = match self {
             LiteralValue::Integer(value) => value.to_string(),
             LiteralValue::Float(value) => value.to_string(),
             LiteralValue::String(value) => value.clone(),
             LiteralValue::None => "none".to_string(),
-        }
+        };
+        write!(f, "{}", value)
     }
 }

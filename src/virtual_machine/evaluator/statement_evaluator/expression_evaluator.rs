@@ -1,3 +1,4 @@
+mod call_of_function_evaluator;
 mod call_of_variable_evaluator;
 mod type_cast_evaluator;
 
@@ -8,18 +9,21 @@ use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator
 
 pub fn evaluate_expression(
     evaluator: &mut Evaluator,
-    expression: Box<ExpressionNode>,
+    expression: ExpressionNode,
 ) -> Result<LiteralValue, EvaluationError> {
-    match *expression {
+    match expression {
         ExpressionNode::Literal(literal) => Ok(literal.value),
         // BinaryOperation
         // CallOfFunction
+        ExpressionNode::CallOfFunction(node) => Ok(
+            call_of_function_evaluator::call_of_function_evaluator(evaluator, *node)?,
+        ),
         // CallOfVariable
-        ExpressionNode::CallOfVariable(node) => {
-            call_of_variable_evaluator::call_of_variable(evaluator, *node)
-        }
+        ExpressionNode::CallOfVariable(node) => Ok(call_of_variable_evaluator::call_of_variable(
+            evaluator, *node,
+        )?),
         // TypeCast
-        ExpressionNode::TypeCast(node) => evaluate_type_cast(evaluator, node),
+        ExpressionNode::TypeCast(node) => evaluate_type_cast(evaluator, *node),
         _ => Ok(LiteralValue::None),
     }
 }
@@ -43,7 +47,7 @@ mod tests {
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(*expression.clone())]);
         let actual: Result<LiteralValue, EvaluationError> =
-            evaluate_expression(&mut evaluator, expression);
+            evaluate_expression(&mut evaluator, *expression);
         assert_eq!(actual, Ok(expected.clone()));
         assert_eq!(actual.unwrap(), expected);
     }
