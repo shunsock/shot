@@ -83,7 +83,7 @@ fn validate_params(
     let mut result: Vec<(String, Type, LiteralValue)> = vec![];
 
     // 引数の型が一致しているかチェック
-    let i: usize = 0;
+    let mut i: usize = 0;
     while i < calling_function_params.len() {
         let calling_function_param_name: String = called_function_params[i].0.clone();
         let calling_function_param_value: LiteralValue =
@@ -91,6 +91,10 @@ fn validate_params(
         let calling_function_param_type: Type =
             literal_to_type(calling_function_param_value.clone());
         let called_function_param_type: Type = called_function_params[i].1.clone();
+
+        // indexを使った処理はここで終わるので、インクリメント
+        i += 1;
+
         match search_argument_name_in_called_function_params(
             calling_function_param_name.clone(),
             called_function_params.clone(),
