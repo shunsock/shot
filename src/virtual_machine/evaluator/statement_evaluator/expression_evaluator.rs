@@ -14,6 +14,9 @@ pub fn evaluate_expression(
     match expression {
         ExpressionNode::Literal(literal) => Ok(literal.value),
         // BinaryOperation
+        ExpressionNode::BinaryOperation(node) => {
+            Ok(LiteralValue::None)
+        }
         // CallOfFunction
         ExpressionNode::CallOfFunction(node) => Ok(
             call_of_function_evaluator::call_of_function_evaluator(evaluator, *node)?,
@@ -24,7 +27,6 @@ pub fn evaluate_expression(
         )?),
         // TypeCast
         ExpressionNode::TypeCast(node) => evaluate_type_cast(evaluator, *node),
-        _ => Ok(LiteralValue::None),
     }
 }
 
