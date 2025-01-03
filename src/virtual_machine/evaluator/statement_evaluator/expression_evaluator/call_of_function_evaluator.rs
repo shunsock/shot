@@ -44,6 +44,20 @@ pub(crate) fn call_of_function_evaluator(
     Ok(function_return_value)
 }
 
+/// 関数呼び出しの引数の情報を元に、呼び出した関数のbodyで用いるEvaluatorとVariableMapperを作成
+///
+/// ## Arguments
+///
+/// * `evaluator` - Evaluator
+/// * `function_params` - 関数呼び出しの引数の情報
+///
+/// ## Returns
+///
+/// * `Result<(), EvaluationError>` - Ok(())
+///
+/// ## Raises
+///
+/// * `EvaluationError` - 変数のセットに失敗（同じ変数名が存在する場合など）
 fn setup_scope(
     evaluator: &mut Evaluator,
     function_params: Vec<(String, Type, LiteralValue)>,
@@ -151,5 +165,51 @@ fn literal_to_type(value: LiteralValue) -> Type {
         LiteralValue::Float(_) => Type::Float,
         LiteralValue::String(_) => Type::String,
         LiteralValue::None => Type::Void,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::virtual_machine::ast::LiteralNode;
+    use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, Type, VariableDeclarationNode, AST};
+    use crate::virtual_machine::evaluator::evaluation_error::EvaluationError;
+    use crate::virtual_machine::evaluator::Evaluator;
+    use crate::virtual_machine::evaluator::mapper::function_mapper::FunctionMapper;
+    use crate::virtual_machine::evaluator::mapper::variable_mapper::VariableMapper;
+    use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator::call_of_function_evaluator::setup_scope;
+
+    /// setup_scope 関数は引数の情報を元にevaluatorを正しく初期化する
+    ///
+    /// let f: fn = (x: int): int { return x; };
+    /// f(x: 1); -- VariableMapperにxがセットされる
+    #[test]
+    fn test_setup_scope() {
+        // 期待される値
+        let expected: VariableDeclarationNode = VariableDeclarationNode {
+            name: "x".to_string(),
+            var_type: Type::Integer,
+            value: Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
+                value: LiteralValue::Integer(1),
+            }))),
+        };
+
+        // テスト対象のセットアップ
+        let ast: AST = AST::new();
+        let function_scope_evaluator: &mut Evaluator =
+            &mut Evaluator::new(ast, FunctionMapper::new(), VariableMapper::new());
+        let params: Vec<(String, Type, LiteralValue)> =
+            vec![("x".to_string(), Type::Integer, LiteralValue::Integer(1))];
+
+        // テスト対象の実行
+        let r: Result<(), EvaluationError> = setup_scope(function_scope_evaluator, params);
+
+        // 結果の検証
+        assert_eq!(r, Ok(()));
+        let variable_data: VariableDeclarationNode =
+            match function_scope_evaluator.variable_mapper.get("x", 0) {
+                Ok(v) => v,
+                Err(_) => panic!("test_setup_scope failed: 作成した変数が見つかりません"),
+            };
+        assert_eq!(variable_data, expected);
     }
 }
