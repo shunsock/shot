@@ -42,6 +42,13 @@ pub enum EvaluationError {
         expected: usize,
         actual: usize,
     },
+    #[error("Combination of {left} and {right} is not supported for {operator} at line {line}")]
+    InvalidBinaryOperation {
+        line: usize,
+        operator: String,
+        left: String,
+        right: String,
+    },
     #[error("Unexpected error at line {line}. Please report this issue.")]
     UnexpectedError { line: usize },
 }

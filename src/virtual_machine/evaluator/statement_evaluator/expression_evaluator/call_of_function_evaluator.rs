@@ -13,24 +13,15 @@ pub(crate) fn call_of_function_evaluator(
     evaluator: &mut Evaluator,
     node: FunctionCallNode,
 ) -> Result<LiteralValue, EvaluationError> {
-    println!("call_of_function_evaluator is called: {:?}", node);
     // 関数呼び出しNodeから呼び出した関数名と引数を取得
-    println!("reading function name and arguments from FunctionCallNode");
     let calling_function_name: String = node.name.clone();
     let calling_function_arguments: Vec<(String, ExpressionNode)> = node.arguments.clone();
-    println!(
-        "function name: {:?}, arguments: {:?}",
-        calling_function_name, calling_function_arguments
-    );
 
     // 関数宣言Nodeから呼び出された関数の情報を取得
-    println!("reading function information from FunctionDeclarationNode");
     let called_function: FunctionDeclarationNode = evaluator
         .function_mapper
         .get(&calling_function_name, evaluator.line)?;
-    println!("checked function information: {:?}", called_function);
     let called_function_arguments: Vec<(String, Type)> = called_function.params.clone();
-    println!("checked arguments information: {:?}", called_function);
 
     // Validate
     let params: Vec<(String, Type, LiteralValue)> = validate_params(
@@ -39,10 +30,8 @@ pub(crate) fn call_of_function_evaluator(
         calling_function_arguments.clone(),
         called_function_arguments.clone(),
     )?;
-    println!("validated params: {:?}", params);
 
     // 関数呼び出しのためのスコープを設定
-    println!("setting up scope for function call");
     let mut ast: AST = AST::new();
     for stmt in called_function.body.clone() {
         ast.push_statement(evaluator.line, stmt);
@@ -51,7 +40,6 @@ pub(crate) fn call_of_function_evaluator(
         &mut Evaluator::new(ast, FunctionMapper::new(), VariableMapper::new());
     setup_scope(function_scope_evaluator, params)?;
     let function_return_value: LiteralValue = function_scope_evaluator.evaluate()?;
-    println!("function return value: {:?}", function_return_value);
 
     Ok(function_return_value)
 }

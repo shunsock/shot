@@ -1,3 +1,4 @@
+mod binary_expression_evaluator;
 mod call_of_function_evaluator;
 mod call_of_variable_evaluator;
 mod type_cast_evaluator;
@@ -14,9 +15,9 @@ pub fn evaluate_expression(
     match expression {
         ExpressionNode::Literal(literal) => Ok(literal.value),
         // BinaryOperation
-        ExpressionNode::BinaryOperation(node) => {
-            Ok(LiteralValue::None)
-        }
+        ExpressionNode::BinaryOperation(node) => Ok(
+            binary_expression_evaluator::evaluate_binary_expression(evaluator, *node)?,
+        ),
         // CallOfFunction
         ExpressionNode::CallOfFunction(node) => Ok(
             call_of_function_evaluator::call_of_function_evaluator(evaluator, *node)?,
