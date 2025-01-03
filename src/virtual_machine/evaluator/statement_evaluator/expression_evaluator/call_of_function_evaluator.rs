@@ -13,15 +13,24 @@ pub(crate) fn call_of_function_evaluator(
     evaluator: &mut Evaluator,
     node: FunctionCallNode,
 ) -> Result<LiteralValue, EvaluationError> {
+    println!("call_of_function_evaluator is called: {:?}", node);
     // 関数呼び出しNodeから呼び出した関数名と引数を取得
+    println!("reading function name and arguments from FunctionCallNode");
     let calling_function_name: String = node.name.clone();
     let calling_function_arguments: Vec<(String, ExpressionNode)> = node.arguments.clone();
+    println!(
+        "function name: {:?}, arguments: {:?}",
+        calling_function_name, calling_function_arguments
+    );
 
     // 関数宣言Nodeから呼び出された関数の情報を取得
+    println!("reading function information from FunctionDeclarationNode");
     let called_function: FunctionDeclarationNode = evaluator
         .function_mapper
         .get(&calling_function_name, evaluator.line)?;
+    println!("checked function information: {:?}", called_function);
     let called_function_arguments: Vec<(String, Type)> = called_function.params.clone();
+    println!("checked arguments information: {:?}", called_function);
 
     // Validate
     let params: Vec<(String, Type, LiteralValue)> = validate_params(
@@ -30,8 +39,10 @@ pub(crate) fn call_of_function_evaluator(
         calling_function_arguments.clone(),
         called_function_arguments.clone(),
     )?;
+    println!("validated params: {:?}", params);
 
     // 関数呼び出しのためのスコープを設定
+    println!("setting up scope for function call");
     let mut ast: AST = AST::new();
     for stmt in called_function.body.clone() {
         ast.push_statement(evaluator.line, stmt);
@@ -40,6 +51,7 @@ pub(crate) fn call_of_function_evaluator(
         &mut Evaluator::new(ast, FunctionMapper::new(), VariableMapper::new());
     setup_scope(function_scope_evaluator, params)?;
     let function_return_value: LiteralValue = function_scope_evaluator.evaluate()?;
+    println!("function return value: {:?}", function_return_value);
 
     Ok(function_return_value)
 }
@@ -201,14 +213,15 @@ fn literal_to_type(value: LiteralValue) -> Type {
 
 #[cfg(test)]
 mod tests {
-    use crate::virtual_machine::ast::LiteralNode;
+    use crate::virtual_machine::ast::Statement;
+    use crate::virtual_machine::ast::{FunctionCallNode, FunctionDeclarationNode, LiteralNode};
     use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, Type, VariableDeclarationNode, AST};
     use crate::virtual_machine::evaluator::core::initialize_evaluator_with_custom_ast;
     use crate::virtual_machine::evaluator::evaluation_error::EvaluationError;
     use crate::virtual_machine::evaluator::Evaluator;
     use crate::virtual_machine::evaluator::mapper::function_mapper::FunctionMapper;
     use crate::virtual_machine::evaluator::mapper::variable_mapper::VariableMapper;
-    use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator::call_of_function_evaluator::{setup_scope, validate_params};
+    use crate::virtual_machine::evaluator::statement_evaluator::expression_evaluator::call_of_function_evaluator::{call_of_function_evaluator, setup_scope, validate_params};
 
     /// setup_scope 関数は引数の情報を元にevaluatorを正しく初期化する
     ///
@@ -431,5 +444,54 @@ mod tests {
                 actual: Type::Integer.to_string()
             })
         );
+    }
+
+    /// evaluate_call_of_function 関数は関数呼び出しを正常に評価する
+    ///
+    /// let f: fn = (): int { return 0; };
+    /// f(); -- 関数呼び出し
+    #[test]
+    fn test_evaluate_call_of_function() {
+        // 期待される値
+        let expected: LiteralValue = LiteralValue::Integer(0);
+
+        // テスト対象のセットアップ
+        let mut function_mapper: FunctionMapper = FunctionMapper::new();
+        match function_mapper.set(
+            0,
+            // -- let f: fn = (): int { return 0; };
+            FunctionDeclarationNode {
+                name: "f".to_string(),
+                params: vec![],
+                return_type: Type::Integer,
+                body: vec![Statement::Return(Box::new(ExpressionNode::Literal(
+                    Box::new(LiteralNode {
+                        value: LiteralValue::Integer(0),
+                    }),
+                )))],
+            },
+        ) {
+            Ok(v) => v,
+            Err(_) => panic!("test_evaluate_call_of_function failed: 関数の登録に失敗しました"),
+        };
+        let mut evaluator: Evaluator =
+            Evaluator::new(AST::new(), function_mapper, VariableMapper::new());
+
+        // -- f(); の関数呼び出し
+        let node: FunctionCallNode = FunctionCallNode {
+            name: "f".to_string(),
+            arguments: vec![],
+        };
+
+        // テスト対象の実行
+        let r: Result<LiteralValue, EvaluationError> =
+            call_of_function_evaluator(&mut evaluator, node);
+        let returned_value: LiteralValue = match r {
+            Ok(v) => v,
+            Err(_) => panic!("test_evaluate_call_of_function failed: 関数呼び出しに失敗しました"),
+        };
+
+        // 結果の検証
+        assert_eq!(returned_value, expected);
     }
 }
