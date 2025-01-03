@@ -6,9 +6,9 @@ use crate::virtual_machine::evaluator::Evaluator;
 
 pub(crate) fn evaluate_type_cast(
     evaluator: &mut Evaluator,
-    node: Box<TypeCastNode>,
+    node: TypeCastNode,
 ) -> Result<LiteralValue, EvaluationError> {
-    let value: LiteralValue = evaluate_expression(evaluator, node.expression)?;
+    let value: LiteralValue = evaluate_expression(evaluator, *node.expression)?;
     match (node.from_type.clone(), node.to_type.clone()) {
         (Type::Integer, Type::Float) => {
             let float_value: f64 = value.to_string().parse().unwrap();
@@ -67,11 +67,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::Integer(1),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::Integer,
             to_type: Type::Float,
             expression: literal_integer_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_integer_expression.clone(),
@@ -91,11 +91,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::Integer(1),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::Integer,
             to_type: Type::String,
             expression: literal_integer_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_integer_expression.clone(),
@@ -115,11 +115,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::Float(1.0),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::Float,
             to_type: Type::Integer,
             expression: literal_float_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_float_expression.clone(),
@@ -149,7 +149,7 @@ mod tests {
                 *literal_float_expression.clone(),
             )]);
         let actual: LiteralValue =
-            evaluate_type_cast(&mut evaluator, type_cast_expression).unwrap();
+            evaluate_type_cast(&mut evaluator, *type_cast_expression).unwrap();
         assert_eq!(actual, expected);
     }
 
@@ -163,11 +163,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String("1".to_string()),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::String,
             to_type: Type::Integer,
             expression: literal_string_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_string_expression.clone(),
@@ -187,11 +187,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String("1".to_string()),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::String,
             to_type: Type::Float,
             expression: literal_string_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_string_expression.clone(),
@@ -210,11 +210,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String("a".to_string()),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::String,
             to_type: Type::Integer,
             expression: literal_string_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_string_expression.clone(),
@@ -233,11 +233,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String("a".to_string()),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::String,
             to_type: Type::Float,
             expression: literal_string_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_string_expression.clone(),
@@ -256,11 +256,11 @@ mod tests {
             Box::new(ExpressionNode::Literal(Box::new(LiteralNode {
                 value: LiteralValue::String("a".to_string()),
             })));
-        let type_cast_expression: Box<TypeCastNode> = Box::new(TypeCastNode {
+        let type_cast_expression: TypeCastNode = TypeCastNode {
             from_type: Type::String,
             to_type: Type::Function,
             expression: literal_string_expression.clone(),
-        });
+        };
         let mut evaluator: Evaluator =
             initialize_evaluator_with_custom_ast(vec![Statement::Expression(
                 *literal_string_expression.clone(),

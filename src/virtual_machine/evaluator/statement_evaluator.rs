@@ -14,7 +14,7 @@ pub(crate) fn evaluate_statement(
     match statement.clone() {
         Statement::Expression(expr) => {
             // Expressionを評価する
-            evaluate_expression(evaluator, Box::new(expr))?;
+            evaluate_expression(evaluator, expr)?;
             Ok(())
         }
         Statement::DeclarationOfFunction(func) => {
