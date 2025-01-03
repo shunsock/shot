@@ -213,7 +213,7 @@ fn literal_to_type(value: LiteralValue) -> Type {
 
 #[cfg(test)]
 mod tests {
-    use crate::virtual_machine::ast::Statement;
+    use crate::virtual_machine::ast::{Statement, VariableCallNode};
     use crate::virtual_machine::ast::{FunctionCallNode, FunctionDeclarationNode, LiteralNode};
     use crate::virtual_machine::ast::{ExpressionNode, LiteralValue, Type, VariableDeclarationNode, AST};
     use crate::virtual_machine::evaluator::core::initialize_evaluator_with_custom_ast;
@@ -489,6 +489,75 @@ mod tests {
         let returned_value: LiteralValue = match r {
             Ok(v) => v,
             Err(_) => panic!("test_evaluate_call_of_function failed: 関数呼び出しに失敗しました"),
+        };
+
+        // 結果の検証
+        assert_eq!(returned_value, expected);
+    }
+
+    /// evaluate_call_of_function 関数は引数を持つ関数呼び出しを正常に評価する
+    ///
+    /// let f: fn = (x: int, y: float): int { return x; };
+    /// f(x: 1, y: 2.0); -- 引数を持つ関数呼び出し
+    #[test]
+    fn test_evaluate_call_of_function_with_arguments() {
+        // 期待される値
+        let expected: LiteralValue = LiteralValue::Integer(1);
+
+        // テスト対象のセットアップ
+        let mut function_mapper: FunctionMapper = FunctionMapper::new();
+        match function_mapper.set(
+            0,
+            // -- let f: fn = (x: int, y: float): int { return x; };
+            FunctionDeclarationNode {
+                name: "f".to_string(),
+                params: vec![
+                    ("x".to_string(), Type::Integer),
+                    ("y".to_string(), Type::Float),
+                ],
+                return_type: Type::Integer,
+                body: vec![Statement::Return(Box::new(ExpressionNode::CallOfVariable(
+                    Box::new(VariableCallNode {
+                        name: "x".to_string(),
+                    }),
+                )))],
+            },
+        ) {
+            Ok(v) => v,
+            Err(_) => panic!(
+                "test_evaluate_call_of_function_with_arguments failed: 関数の登録に失敗しました"
+            ),
+        };
+        let mut evaluator: Evaluator =
+            Evaluator::new(AST::new(), function_mapper, VariableMapper::new());
+
+        // -- f(x: 1, y: 2.0); の関数呼び出し
+        let node: FunctionCallNode = FunctionCallNode {
+            name: "f".to_string(),
+            arguments: vec![
+                (
+                    "x".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::Integer(1),
+                    })),
+                ),
+                (
+                    "y".to_string(),
+                    ExpressionNode::Literal(Box::new(LiteralNode {
+                        value: LiteralValue::Float(2.0),
+                    })),
+                ),
+            ],
+        };
+
+        // テスト対象の実行
+        let r: Result<LiteralValue, EvaluationError> =
+            call_of_function_evaluator(&mut evaluator, node);
+        let returned_value: LiteralValue = match r {
+            Ok(v) => v,
+            Err(_) => panic!(
+                "test_evaluate_call_of_function_with_arguments failed: 関数呼び出しに失敗しました"
+            ),
         };
 
         // 結果の検証
