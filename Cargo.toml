@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 clap = "4.5.42"
-thiserror = "2.0.12"
+thiserror = "2.0.16"
 
